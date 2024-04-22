@@ -1,0 +1,14 @@
+{
+  "name": "@mussia41/source",
+  "version": "0.0.0",
+  "license": "MIT",
+  "scripts": {},
+  "private": true,
+  "dependencies": {
+    "@monodon/rust": "1.4.0"
+  },
+  "devDependencies": {
+    "@nx/workspace": "18.3.3",
+    "nx": "18.3.3"
+  }
+}
