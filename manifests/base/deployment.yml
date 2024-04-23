@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: actix-app
+  labels:
+    app: actix-app
+spec:
+  replicas: 1
+  template:
+    metadata:
+      name: actix-app
+      labels:
+        app: actix-app
+    spec:
+      serviceAccountName: actix-app
+      restartPolicy: Always
+      containers:
+        - name: actix-app
+          image: yurikrupnik/actix-app:latest
+          imagePullPolicy: IfNotPresent
+          resources:
+            requests:
+              memory: "64Mi"
+              cpu: "250m"
+            limits:
+              memory: "128Mi"
+              cpu: "500m"
+          env:
+            - name: MONGO_URI
+              valueFrom:
+                secretKeyRef:
+                  key: mongo-uri
+                  name: mongo-uri
+  selector:
+    matchLabels:
+      app: actix-app

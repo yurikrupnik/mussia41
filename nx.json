@@ -1,17 +1,41 @@
 {
-  "$schema": "./node_modules/nx/schemas/nx-schema.json",
   "namedInputs": {
-    "default": [
-      "{projectRoot}/**/*",
-      "sharedGlobals"
+    "tfSource": [
+      "{projectRoot}/src/*.tf"
     ],
-    "production": [
-      "default"
+    "tfWD": [
+      "{projectRoot}/src/.terraform"
     ],
-    "sharedGlobals": []
+    "tfPlan": [
+      "{projectRoot}/src/tfplan"
+    ]
   },
-  "plugins": [
-    "@monodon/rust"
-  ],
-  "nxCloudAccessToken": "Y2Y5NWMzZDQtOTFhMy00MWU0LTkxNGYtM2FiZGE0YzFmYTAyfHJlYWQtd3JpdGU="
+  "targetDefaults": {
+    "initialize": {
+      "inputs": [
+        "tfSource"
+      ]
+    },
+    "lint": {
+      "inputs": [
+        "tfSource"
+      ]
+    },
+    "validate": {
+      "inputs": [
+        "tfSource",
+        "tfWD"
+      ]
+    }
+  },
+  "tasksRunnerOptions": {
+    "default": {
+      "runner": "nx/tasks-runners/default",
+      "options": {
+        "cacheableOperations": [
+          "initialize"
+        ]
+      }
+    }
+  }
 }

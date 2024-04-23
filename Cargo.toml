@@ -1,6 +1,18 @@
+
 [workspace]
-resolver = "2"
-members = []
+resolver = '2'
+members = [
+	'libs/models',
+	'libs/services',
+	'apps/web/actix',
+	'apps/web/salvo',
+	'apps/web/ntex',
+	'apps/web/axum',
+]
 
 [profile.release]
+opt-level = "z"
+codegen-units = 1
+strip = true
 lto = true
+
