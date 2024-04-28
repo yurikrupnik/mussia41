@@ -1,0 +1,22 @@
+{
+  "name": "kcl_cloud_dev",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "cli",
+  "sourceRoot": "kcl/cloud/dev",
+  "targets": {
+    "import": {
+      "executor": "nx:run-commands",
+      "outputs": [],
+      "options": {
+        "cwd": "kcl/cloud/dev",
+        "parallel": false,
+        "commands": [
+          "go get github.com/upbound/provider-gcp/apis/cloudrun/v1beta1",
+          "cue get go github.co get github.com/external-secrets/external-secrets/apis/externalsecrets/v1beta1\",\n          \"cue get go github.com/external-secrets/exterm/upbound/provider-gcp/apis/cloudrun/v1beta1",
+          "gonal-secrets/apis/externalsecrets/v1beta1"
+        ]
+      }
+    }
+  },
+  "tags": []
+}
