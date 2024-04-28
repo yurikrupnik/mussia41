@@ -26,12 +26,15 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: 20
-#          cache: 'pnpm'
-      - run: npm ci
+      - uses: pnpm/action-setup@v3
+        with:
+          version: 9
+          run_install: false
+      - run: rustup toolchain install stable --profile minimal
       - uses: nrwl/nx-set-shas@v4
-
-      - run: git branch --track main origin/main
-        if: ${{ github.event_name == 'pull_request' }}
-
-#      - run: npx nx-cloud record -- nx format:check
-      - run: npx nx affected -t lint test build
+      - name: Install dependencies
+        run: pnpm install --no-frozen-lockfile
+      #      - run: pnpm run cypress:install
+      - run: pnpm nx affected --target=build --parallel --max-parallel=3
+      - run: pnpm nx affected --target=test --parallel --max-parallel=3
+      - run: pnpm nx affected --target=lint --parallel --max-parallel=3
