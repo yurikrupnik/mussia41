@@ -1,0 +1,12 @@
+[package]
+name = "operators_protos"
+version = "0.1.0"
+edition = "2021"
+
+
+[dependencies]
+kube = { version = "0.90", features = ["runtime", "derive"] }
+k8s-openapi = { version = "0.21", features = ["latest"] }
+serde_yaml = "0.9.34+deprecated"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html

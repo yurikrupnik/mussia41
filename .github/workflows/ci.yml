@@ -31,6 +31,10 @@ jobs:
           version: 9
           run_install: false
       - run: rustup toolchain install stable --profile minimal
+#      - uses: Swatinem/rust-cache@v2
+#        with:
+#          cache-directories: "dist/target"
+#          cache-all-crates: true
       - uses: nrwl/nx-set-shas@v4
       - name: Install dependencies
         run: pnpm install --no-frozen-lockfile
