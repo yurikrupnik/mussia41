@@ -1,0 +1,21 @@
+{
+  "name": "kcl",
+  "$schema": "../node_modules/nx/schemas/project-schema.json",
+  "projectType": "application",
+  "sourceRoot": "apps/cloud/aws/storage/src",
+  "targets": {
+    "make": {
+      "command": "echo hello",
+      "inputs": []
+    },
+    "makes": {
+      "commands": [
+        "echo hello",
+        "echo Shit"
+      ]
+    }
+  },
+  "tags": [
+    "kcl"
+  ]
+}

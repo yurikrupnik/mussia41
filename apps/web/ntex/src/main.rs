@@ -1,55 +1,102 @@
-use ntex::web;
-use openssl::ssl::{SslAcceptor, SslFiletype, SslMethod};
-use serde::Deserialize;
+use ntex::web::{self, HttpResponse, Responder};
+use std::net::Ipv4Addr;
 
-#[derive(Deserialize)]
-struct Info {
-    user_id: u32,
-    friend: String,
-}
-
-/// extract path info using serde
-#[web::get("/users/{user_id}/{friend}")] // <- define path parameters
-async fn friend1(info: web::types::Path<Info>) -> Result<String, web::Error> {
-    // let sd = info.into();
-    // info.into_inner().friend
-    Ok(format!(
-        "Welcome {}, user_id {}!",
-        info.friend, info.user_id
-    ))
-}
 #[web::get("/")]
-async fn welcome(_req: web::HttpRequest) -> impl web::Responder {
-    "Welcome!"
-}
-
-/// extract path info from "/users/{user_id}/{friend}" url
-/// {user_id} - deserializes to a u32
-/// {friend} - deserializes to a String
-#[web::get("/users/{user_id}/{friend}")] // <- define path parameters
-async fn friend(path: web::types::Path<(u32, String)>) -> Result<String, web::Error> {
-    let (user_id, friend) = path.into_inner();
-    Ok(format!("Welcome {}, user_id {}!", friend, user_id))
+async fn hello() -> impl Responder {
+    HttpResponse::Ok().body("Hello world!")
 }
 
 #[ntex::main]
 async fn main() -> std::io::Result<()> {
-    // load TLS keys
-    // to create a self-signed temporary cert for testing:
-    // `openssl req -x509 -newkey rsa:4096 -nodes -keyout key.pem -out cert.pem -days 365 -subj '/CN=localhost'`
-    let mut builder =
-        SslAcceptor::mozilla_intermediate(SslMethod::tls()).unwrap();
-    builder
-        .set_private_key_file("key.pem", SslFiletype::PEM)
-        .unwrap();
-    builder.set_certificate_chain_file("cert.pem").unwrap();
-
-    web::HttpServer::new(|| web::App::new()
-        .service(welcome)
-        .service(friend1)
-        .service(friend)
-    )
-        .bind_openssl("127.0.0.1:8080", builder)?
+    std::env::set_var("RUST_LOG", "ntex=info");
+    env_logger::init();
+    
+    web::HttpServer::new(move || {
+        // let json_config = web::types::JsonConfig::default().limit(4096);
+        web::App::new()
+            // .service(SwaggerUi::new("/swagger-ui").url("/api-docs/openapi.json", ApiDoc::openapi()))
+            // .service(Redoc::with_url("/redoc", ApiDoc::openapi()))
+            // .service(Redoc::with_url("/redoc", ApiDoc::openapi.clone()))
+            .wrap(web::middleware::Logger::default())
+            // .state(json_config)
+            // .state(redis_pool.clone())
+            // .state(client.clone())
+            // .state(state.clone())
+            .service(hello)
+            // .configure(user_routes)
+            // .configure(project_routes)
+            // .configure(generic_project_routes::<Project, NewProject>)
+            // .configure(user_routes_mongo)
+        // .default_service()
+    })
+        .bind((Ipv4Addr::UNSPECIFIED, 8080))?
+        .workers(1)
         .run()
         .await
 }
+
+#[cfg(test)]
+mod tests {
+    use ntex::web;
+    use ntex::web::test;
+
+    use super::*;
+    // #[ntex::test]
+    // async fn test_index_get() {
+    //     let app = test::init_service(web::App::new().route("/", web::get().to(index))).await;
+    //     let req = test::TestRequest::get().uri("/").to_request();
+    //     let resp = test::call_service(&app, req).await;
+    //     assert!(resp.status().is_success());
+    // }
+    //
+    // #[ntex::test]
+    // async fn test_index_post() {
+    //     let app = test::init_service(web::App::new().route("/", web::get().to(index))).await;
+    //     let req = test::TestRequest::post().uri("/").to_request();
+    //     let resp = test::call_service(&app, req).await;
+    //     assert!(resp.status().is_client_error());
+    // }
+}
+// #[ntex::main]
+// async fn main() -> std::io::Result<()> {
+//     env_logger::init();
+//
+//     #[derive(OpenApi)]
+//     #[openapi(
+//     paths(
+//     ),
+//     components(
+//     ),
+//     tags(
+//     ),
+//     )]
+//     struct ApiDoc;
+//
+//     // let store = Data::new(TodoStore::default());
+//     // Make instance variable of ApiDoc so all worker threads gets the same instance.
+//     let openapi = ApiDoc::openapi();
+//
+//     web::HttpServer::new(|| {
+//         web::App::new()
+//             .wrap(middleware::Logger::default())
+//             .wrap(middleware::DefaultHeaders::new().header("X-Version", "0.2"))
+//                     // .service(Redoc::with_url("/redoc", openapi.clone()))
+//                     // .service(
+//                     //     SwaggerUi::new("/swagger-ui/{_:.*}").url("/api-docs/openapi.json", openapi.clone()),
+//                     // )
+//                     // // There is no need to create RapiDoc::with_openapi because the OpenApi is served
+//                     // // via SwaggerUi. Instead we only make rapidoc to point to the existing doc.
+//                     // //
+//                     // // If we wanted to serve the schema, the following would work:
+//                     // // .service(RapiDoc::with_openapi("/api-docs/openapi2.json", openapi.clone()).path("/rapidoc"))
+//                     // .service(RapiDoc::new("/api-docs/openapi.json").path("/rapidoc"))
+//             .route(
+//             "/",
+//             web::get().to(|| async { web::HttpResponse::Ok().finish() }),
+//         )
+//
+//     })
+//         .bind((Ipv4Addr::UNSPECIFIED, 8080))?
+//         .run()
+//         .await;
+// }

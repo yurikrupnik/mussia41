@@ -1,4 +1,3 @@
-
 [workspace]
 resolver = '2'
 members = [
@@ -8,6 +7,8 @@ members = [
 	'apps/web/salvo',
 	'apps/web/ntex',
 	'apps/web/axum',
+	'apps/operators/zerg',
+	'apps/operators/protos',
 ]
 
 [profile.release]
@@ -15,4 +16,3 @@ opt-level = "z"
 codegen-units = 1
 strip = true
 lto = true
-
