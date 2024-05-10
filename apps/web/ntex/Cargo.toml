@@ -5,10 +5,10 @@ edition = "2021"
 
 
 [dependencies]
-ntex = { version = "1.0", features = ["tokio", "openssl"] }
+ntex = { version = "1.2", features = ["tokio", "openssl"] }
 openssl = { version = "0.10" }
 serde = { version = "1.0", features = ["derive"] }
-env_logger = "0.11.3"
-tokio = "1.37.0"
+env_logger = "0.11"
+tokio = "1.37"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
