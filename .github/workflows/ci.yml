@@ -174,7 +174,7 @@ jobs:
       - uses: nrwl/nx-set-shas@v4
       - name: Install dependencies
         run: pnpm install --no-frozen-lockfile
-      - run: pnpm nx affected --target=docker --parallel --max-parallel=3 --prod
+      - run: pnpm nx affected --target=docker-gcp --parallel --max-parallel=3 --prod
         env:
           GOOS: linux
           GOARCH: amd64
