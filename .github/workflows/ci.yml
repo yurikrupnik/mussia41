@@ -11,7 +11,63 @@ permissions:
   contents: read
 
 jobs:
-  main:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      # Connect your workspace on nx.app and uncomment this to enable task distribution.
+      # The "--stop-agents-after" is optional, but allows idle agents to shut down once the "build" targets have been requested
+      # - run: npx nx-cloud start-ci-run --distribute-on="5 linux-medium-js" --stop-agents-after="build"
+
+      # Cache node_modules
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 20
+      - uses: pnpm/action-setup@v3
+        with:
+          version: 9
+          run_install: false
+      - run: rustup toolchain install stable --profile minimal
+      #      - uses: Swatinem/rust-cache@v2
+      #        with:
+      #          cache-directories: "dist/target"
+      #          cache-all-crates: true
+      - uses: nrwl/nx-set-shas@v4
+      - name: Install dependencies
+        run: pnpm install --no-frozen-lockfile
+      - run: pnpm nx affected --target=test --parallel --max-parallel=3
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      # Connect your workspace on nx.app and uncomment this to enable task distribution.
+      # The "--stop-agents-after" is optional, but allows idle agents to shut down once the "build" targets have been requested
+      # - run: npx nx-cloud start-ci-run --distribute-on="5 linux-medium-js" --stop-agents-after="build"
+
+      # Cache node_modules
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 20
+      - uses: pnpm/action-setup@v3
+        with:
+          version: 9
+          run_install: false
+      - run: rustup toolchain install stable --profile minimal
+      #      - uses: Swatinem/rust-cache@v2
+      #        with:
+      #          cache-directories: "dist/target"
+      #          cache-all-crates: true
+      - uses: nrwl/nx-set-shas@v4
+      - name: Install dependencies
+        run: pnpm install --no-frozen-lockfile
+      - run: pnpm nx affected --target=lint --parallel --max-parallel=3
+  build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -39,6 +95,33 @@ jobs:
       - name: Install dependencies
         run: pnpm install --no-frozen-lockfile
       #      - run: pnpm run cypress:install
-      - run: pnpm nx affected --target=build --parallel --max-parallel=3
-      - run: pnpm nx affected --target=test --parallel --max-parallel=3
-      - run: pnpm nx affected --target=lint --parallel --max-parallel=3
+      - run: pnpm nx affected --target=build --parallel --max-parallel=3 --prod
+  image:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      # Connect your workspace on nx.app and uncomment this to enable task distribution.
+      # The "--stop-agents-after" is optional, but allows idle agents to shut down once the "build" targets have been requested
+      # - run: npx nx-cloud start-ci-run --distribute-on="5 linux-medium-js" --stop-agents-after="build"
+
+      # Cache node_modules
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 20
+      - uses: pnpm/action-setup@v3
+        with:
+          version: 9
+          run_install: false
+      - run: rustup toolchain install stable --profile minimal
+      #      - uses: Swatinem/rust-cache@v2
+      #        with:
+      #          cache-directories: "dist/target"
+      #          cache-all-crates: true
+      - uses: nrwl/nx-set-shas@v4
+      - name: Install dependencies
+        run: pnpm install --no-frozen-lockfile
+      #      - run: pnpm run cypress:install
+      - run: pnpm nx affected --target=docker --parallel --max-parallel=3 --prod
