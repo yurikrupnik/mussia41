@@ -54,6 +54,13 @@
           "release": true
         }
       }
+    },
+    "docker-gcp": {
+      "executor": "nx:run-commands",
+      "outputs": [],
+      "options": {
+        "command": "gcloud builds submit . --substitutions _APP_NAME=web_axum,_IMAGE=web_axum --async"
+      }
     }
   },
   "tags": []

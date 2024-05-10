@@ -54,6 +54,37 @@
           "release": true
         }
       }
+    },
+    "docker-gcp": {
+      "executor": "nx:run-commands",
+      "outputs": [],
+      "options": {
+        "command": "gcloud builds submit . --substitutions _APP_NAME=web_actix,_IMAGE=web_actix --async"
+      }
+    },
+    "docker": {
+      "executor": "@nx-tools/nx-container:build",
+      "options": {
+        "push": true,
+        "file": "./Dockerfile",
+        "target": "final",
+        "build-args": [
+          "APP_NAME=web_actix"
+        ],
+        "metadata": {
+          "images": [
+            "yurikrupnik/actix-app"
+          ],
+          "tags": [
+            "type=schedule",
+            "type=ref,event=branch",
+            "type=ref,event=tag",
+            "type=ref,event=pr",
+            "type=semver,pattern={{version}}",
+            "type=sha"
+          ]
+        }
+      }
     }
   },
   "tags": []

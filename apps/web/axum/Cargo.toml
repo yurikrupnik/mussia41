@@ -8,4 +8,5 @@ edition = "2021"
 tokio = { version = '1.37', features = ['macros', 'signal', 'rt-multi-thread'] }
 axum = {version = "0.7", features = ["default"]}
 tower = { version = "0.4", features = ["util"] }
+jsonwebtoken = {version = "9.3"}
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
