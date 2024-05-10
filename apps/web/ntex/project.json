@@ -63,7 +63,7 @@
         "command": "gcloud builds submit . --substitutions _IMAGE=web-ntex,_APP_NAME=web_ntex --async --config ci/cloudbuild-run-container.yaml"
       }
     },
-    "docker": {
+    "dockers": {
       "executor": "@nx-tools/nx-container:build",
       "options": {
         "push": true,
