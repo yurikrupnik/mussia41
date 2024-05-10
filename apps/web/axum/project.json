@@ -59,7 +59,7 @@
       "executor": "nx:run-commands",
       "outputs": [],
       "options": {
-        "command": "gcloud builds submit . --substitutions _APP_NAME=web_axum,_IMAGE=web_axum --async"
+        "command": "gcloud builds submit . --substitutions _APP_NAME=web_axum,_IMAGE=web-axum --async --config ci/cloudbuild-run-container.yaml"
       }
     }
   },

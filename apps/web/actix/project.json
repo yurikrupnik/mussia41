@@ -59,7 +59,7 @@
       "executor": "nx:run-commands",
       "outputs": [],
       "options": {
-        "command": "gcloud builds submit . --substitutions _APP_NAME=web_actix,_IMAGE=web_actix --async"
+        "command": "gcloud builds submit . --substitutions _APP_NAME=web_actix,_IMAGE=web-actix --async --config ci/cloudbuild-run-container.yaml"
       }
     },
     "docker": {
@@ -73,7 +73,7 @@
         ],
         "metadata": {
           "images": [
-            "yurikrupnik/actix-app"
+            "yurikrupnik/web-actix"
           ],
           "tags": [
             "type=schedule",

@@ -60,7 +60,7 @@
       "executor": "nx:run-commands",
       "outputs": [],
       "options": {
-        "command": "gcloud builds submit . --substitutions _IMAGE=web_ntex,_APP_NAME=web_ntex"
+        "command": "gcloud builds submit . --substitutions _IMAGE=web-ntex,_APP_NAME=web_ntex --async --config ci/cloudbuild-run-container.yaml"
       }
     }
   }
