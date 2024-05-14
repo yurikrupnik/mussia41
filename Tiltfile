@@ -3,7 +3,7 @@ docker_build(
   ".",
   dockerfile="./Dockerfile",
   build_args={"APP_NAME":"web_actix"},
-  target="rust",
+  target="final",
 )
 
 k8s_yaml(kustomize('manifests/base'))

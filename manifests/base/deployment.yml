@@ -1,22 +1,22 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: actix-app
+  name: web-actix
   labels:
-    app: actix-app
+    app: web-actix
 spec:
   replicas: 1
   template:
     metadata:
-      name: actix-app
+      name: web-actix
       labels:
-        app: actix-app
+        app: web-actix
     spec:
-      serviceAccountName: actix-app
+      serviceAccountName: web-actix
       restartPolicy: Always
       containers:
-        - name: actix-app
-          image: yurikrupnik/actix-app:latest
+        - name: web-actix
+          image: yurikrupnik/web-actix:latest
           imagePullPolicy: IfNotPresent
           resources:
             requests:
@@ -25,12 +25,12 @@ spec:
             limits:
               memory: "128Mi"
               cpu: "500m"
-          env:
-            - name: MONGO_URI
-              valueFrom:
-                secretKeyRef:
-                  key: mongo-uri
-                  name: mongo-uri
+#          env:
+#            - name: MONGO_URI
+#              valueFrom:
+#                secretKeyRef:
+#                  key: mongo-uri
+#                  name: mongo-uri
   selector:
     matchLabels:
-      app: actix-app
+      app: web-actix

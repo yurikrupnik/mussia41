@@ -1,3 +1,4 @@
+
 [workspace]
 resolver = '2'
 members = [
@@ -9,10 +10,11 @@ members = [
 	'apps/web/axum',
 	'apps/operators/zerg',
 	'apps/operators/protos',
+	'libs/shared',
 ]
 
 [profile.release]
-opt-level = "z"
+opt-level = 'z'
 codegen-units = 1
 strip = true
 lto = true

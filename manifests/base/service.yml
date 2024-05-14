@@ -1,11 +1,11 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: actix-app
+  name: web-actix
   annotations:
     "prometheus.io/scrape": "true"
   labels:
-    run: actix-app
+    run: web-actix
 spec:
   type: ClusterIP
   ports:
@@ -14,4 +14,4 @@ spec:
       port: 8080
       targetPort: 8080
   selector:
-    app: actix-app
+    app: web-actix
