@@ -55,6 +55,14 @@
         }
       }
     },
+    "serve": {
+      "executor": "nx:run-commands",
+      "outputs": [],
+      "options": {
+        "command": "cargo watch -x run",
+        "cwd": "apps/web/axum"
+      }
+    },
     "docker-gcp": {
       "executor": "nx:run-commands",
       "outputs": [],

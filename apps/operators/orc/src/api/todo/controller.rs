@@ -1,5 +1,6 @@
 use super::model::{NewTodo, Todo, TodoListQuery, Update};
 use futures::TryStreamExt;
+use mongodb::bson::{doc, from_document};
 use mongodb::Collection;
 use ntex::web::types::{Json, Path, Query, State};
 use ntex::web::HttpResponse;
@@ -72,7 +73,21 @@ pub async fn get_todos(app_state: State<AppState>, query: Query<TodoListQuery>) 
 pub async fn create_todo(body: Json<NewTodo>, app_state: State<AppState>) -> HttpResponse {
     let body = body.into_inner();
     let db = &app_state.db;
-    create_item::<Todo, NewTodo>(db, body).await
+    if let Err(response) = validate_request_body(&body) {
+        return response; // Returns early if validation fails
+    }
+    let response = create_item::<Todo, NewTodo>(db, body).await;
+    // HttpResponse::Created().json(&doc)
+    match response {
+        Ok(Some(payload)) => {
+            let doc: Todo = from_document(payload).expect("error 5");
+            HttpResponse::Created().json(&doc)
+        }
+        Ok(None) => {
+            HttpResponse::NotFound().json::<String>(&format!("No user found with id"))
+        }
+        Err(err) => HttpResponse::InternalServerError().json(&err.to_string()),
+    }
 }
 
 /// Delete `Todo` by ID

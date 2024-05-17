@@ -54,6 +54,14 @@
           "release": true
         }
       }
+    },
+    "serve": {
+      "executor": "nx:run-commands",
+      "outputs": [],
+      "options": {
+        "command": "cargo watch -x run",
+        "cwd": "apps/operators/orc"
+      }
     }
   },
   "tags": []

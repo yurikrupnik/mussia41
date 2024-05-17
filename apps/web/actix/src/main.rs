@@ -1,18 +1,16 @@
 use actix_web::{get, post, web, App, HttpResponse, HttpServer, Responder};
+use general::socket_addrs::get_web_url;
 
-fn add1(n: &i32) -> i32 {
-    n + 1
-}
-fn adder(a: i32) -> impl Fn(i32) -> i32 {
+fn adder(a: i32) -> impl Fn(&i32) -> i32 {
     move |b| a + b
 }
 
 fn asd() -> Vec<i32> {
     let v1 = vec![1, 3, 5];
-    let x = v1.iter().map(add1);
-    let y = x.collect();
     let s = adder(1);
-    let _ss = s(10);
+    let x = v1.iter().map(adder(12));
+    let y = x.collect();
+    let _ss = s(&10);
     y
 }
 
@@ -31,7 +29,6 @@ async fn manual_hello() -> impl Responder {
     HttpResponse::Ok().body("Hey there!!")
 }
 
-use general::socket_addrs::get_web_url;
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {

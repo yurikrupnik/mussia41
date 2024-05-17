@@ -25,14 +25,24 @@ pub async fn drop<T: DbResource>(app_state: State<AppState>) -> impl Responder {
 /// Create new generic CRUD (create) function.
 /// Uses generic `create_item::<T,U>(db, body).await`
 /// Extracts body and db from webserver state
-pub async fn create<T, C>(body: Json<C>, app_state: State<AppState>) -> impl Responder
+pub async fn create<T, C>(body: Json<C>, app_state: State<AppState>) -> HttpResponse
 where
     T: DbResource + Serialize + DeserializeOwned + Sync + Send + Unpin,
     C: Serialize + DeserializeOwned + Sync + Send + Unpin + Validate + 'static,
 {
     let body = body.into_inner();
     let db = &app_state.db;
-    create_item::<T, C>(db, body).await
+    let response = create_item::<T, C>(db, body).await;
+    match response {
+        Ok(Some(payload)) => {
+            let doc: T = from_document(payload).expect("error 5");
+            HttpResponse::Created().json(&doc)
+        }
+        Ok(None) => {
+            HttpResponse::NotFound().json::<String>(&format!("No user could be created from the data"))
+        }
+        Err(err) => HttpResponse::InternalServerError().json(&err.to_string()),
+    }
 }
 
 /// Delete `Project` by ID

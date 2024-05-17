@@ -19,6 +19,7 @@ use general::{get_mongo_uri, get_redis_uri};
 use mongodb::Client;
 use ntex::web::{self, HttpResponse, Responder};
 use shared::app_state::AppState;
+use swagger::ApiDoc;
 
 #[web::get("/")]
 async fn hello() -> impl Responder {
@@ -28,7 +29,6 @@ async fn hello() -> impl Responder {
 async fn default() -> HttpResponse {
     HttpResponse::NotFound().finish()
 }
-use swagger::ApiDoc;
 #[ntex::main]
 async fn main() -> std::io::Result<()> {
     std::env::set_var("RUST_LOG", "ntex=info");

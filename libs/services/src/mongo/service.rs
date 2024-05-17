@@ -8,8 +8,9 @@ use serde::de::DeserializeOwned;
 use serde::Serialize;
 use shared::validation::validate_request_body;
 use validator::Validate;
-
-pub fn create_query_id(id: &ObjectId) -> Document {
+use anyhow::Result;
+use serde::Deserialize;
+fn create_query_id(id: &ObjectId) -> Document {
     doc! {"_id": id}
 }
 
@@ -29,14 +30,11 @@ where
     }
 }
 
-pub async fn create_item<T, U>(db: &Database, item: U) -> HttpResponse
+pub async fn create_item<T, U>(db: &Database, item: U) -> Result<Option<Document>>
 where
     T: DbResource + Serialize + DeserializeOwned + Sync + Send + Unpin,
     U: Serialize + DeserializeOwned + Sync + Send + Unpin + Validate + 'static,
 {
-    if let Err(response) = validate_request_body(&item) {
-        return response; // Returns early if validation fails
-    }
     let collection = db.collection(T::COLLECTION);
     let document = to_document(&item).expect("shit happened");
     let result = collection
@@ -44,17 +42,19 @@ where
         .await
         .expect("Error creating item");
     let new_id = result.inserted_id.as_object_id().expect("error 1");
-    let response = collection.find_one(create_query_id(&new_id), None).await;
-    match response {
-        Ok(Some(payload)) => {
-            let doc: T = from_document(payload).expect("error 2");
-            HttpResponse::Created().json(&doc)
-        }
-        Ok(None) => {
-            HttpResponse::NotFound().json::<String>(&format!("No user found with id {new_id}"))
-        }
-        Err(err) => HttpResponse::InternalServerError().json(&err.to_string()),
-    }
+    let response = collection.find_one(create_query_id(&new_id), None).await?;
+    Ok(response)
+    
+    // match response {
+    //     Ok(Some(payload)) => {
+    //         let doc: T = from_document(payload).expect("error 2");
+    //         HttpResponse::Created().json(&doc)
+    //     }
+    //     Ok(None) => {
+    //         HttpResponse::NotFound().json::<String>(&format!("No user found with id {new_id}"))
+    //     }
+    //     Err(err) => HttpResponse::InternalServerError().json(&err.to_string()),
+    // }
 }
 
 pub async fn drop_collection<T: DbResource>(db: &Database) -> HttpResponse {
@@ -126,9 +126,6 @@ where
         None => HttpResponse::NotFound().json(&format!("not found item with ID {id}")),
     }
 }
-
-use anyhow::Result;
-use serde::Deserialize;
 
 // Define a structure for the request body
 #[derive(Deserialize)]

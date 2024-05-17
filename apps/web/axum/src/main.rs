@@ -1,7 +1,5 @@
 use axum::{routing::get, Router};
-// use std::net::Ipv4Addr;
 use general::socket_addrs::get_web_url_v1;
-// use general::get_port;
 
 #[tokio::main]
 async fn main() {
