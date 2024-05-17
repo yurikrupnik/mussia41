@@ -1,3 +1,6 @@
+pub mod mongo;
+pub mod redis;
+
 #[cfg(test)]
 mod tests {
     #[test]

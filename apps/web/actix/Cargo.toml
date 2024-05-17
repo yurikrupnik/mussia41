@@ -4,6 +4,7 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
+general = {path = "../../../libs/general"}
 actix-web = { version = "4.5" }
 serde = { version = "1.0" }
 actix-rt = { version = "2.9" }

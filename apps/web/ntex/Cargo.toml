@@ -5,6 +5,7 @@ edition = "2021"
 
 
 [dependencies]
+general = {path = "../../../libs/general"}
 ntex = { version = "1.2", features = ["tokio", "openssl"] }
 openssl = { version = "0.10" }
 serde = { version = "1.0", features = ["derive"] }

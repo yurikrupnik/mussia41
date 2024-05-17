@@ -31,16 +31,19 @@ async fn manual_hello() -> impl Responder {
     HttpResponse::Ok().body("Hey there!!")
 }
 
+use general::socket_addrs::get_web_url;
+
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
     println!("Connected to mongo");
+    // s.
     HttpServer::new(|| {
         App::new()
             .service(hello)
             .service(echo)
             .route("/hey", web::get().to(manual_hello))
     })
-        .bind(("0.0.0.0", 8080))?
-        .run()
-        .await
+    .bind(get_web_url(false))?
+    .run()
+    .await
 }
