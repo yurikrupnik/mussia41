@@ -1,111 +1,68 @@
-use mongodb::bson::oid::{Error, ObjectId};
-use mongodb::bson::{doc, from_document, to_document, Document};
+use mongodb::bson::oid::ObjectId;
+use mongodb::bson::{doc, to_document, Document};
 use mongodb::options::{FindOneAndUpdateOptions, ReturnDocument};
 use mongodb::{Collection, Database};
-use ntex::web::HttpResponse;
 use proc_macros::DbResource;
 use serde::de::DeserializeOwned;
 use serde::Serialize;
-use shared::validation::validate_request_body;
-use validator::Validate;
 use anyhow::Result;
-use serde::Deserialize;
-fn create_query_id(id: &ObjectId) -> Document {
-    doc! {"_id": id}
+use mongodb::results::DeleteResult;
+
+fn create_query_id(id: &str) -> Document {
+    let obj_id = ObjectId::parse_str(id).unwrap();
+    doc! {"_id": obj_id}
 }
 
 pub enum ResponseErrors {}
 
-pub fn create_response<T>(response: Result<Option<Document>, Error>, id: ObjectId) -> HttpResponse
-where
-    T: Serialize + Sync + Send + Unpin + DeserializeOwned + 'static,
-{
-    match response {
-        Ok(Some(payload)) => {
-            let doc: T = from_document(payload).unwrap();
-            HttpResponse::Created().json(&doc)
-        }
-        Ok(None) => HttpResponse::NotFound().json::<String>(&format!("No user found with id {id}")),
-        Err(err) => HttpResponse::InternalServerError().json(&err.to_string()),
-    }
-}
-
 pub async fn create_item<T, U>(db: &Database, item: U) -> Result<Option<Document>>
 where
     T: DbResource + Serialize + DeserializeOwned + Sync + Send + Unpin,
-    U: Serialize + DeserializeOwned + Sync + Send + Unpin + Validate + 'static,
+    U: Serialize + DeserializeOwned + Sync + Send + Unpin + 'static,
 {
     let collection = db.collection(T::COLLECTION);
     let document = to_document(&item).expect("shit happened");
     let result = collection
         .insert_one(document, None)
-        .await
-        .expect("Error creating item");
-    let new_id = result.inserted_id.as_object_id().expect("error 1");
-    let response = collection.find_one(create_query_id(&new_id), None).await?;
+        .await?;
+    let sd = result.inserted_id.as_str().expect("error 1");
+    let response = collection.find_one(create_query_id(sd), None).await?;
     Ok(response)
-    
-    // match response {
-    //     Ok(Some(payload)) => {
-    //         let doc: T = from_document(payload).expect("error 2");
-    //         HttpResponse::Created().json(&doc)
-    //     }
-    //     Ok(None) => {
-    //         HttpResponse::NotFound().json::<String>(&format!("No user found with id {new_id}"))
-    //     }
-    //     Err(err) => HttpResponse::InternalServerError().json(&err.to_string()),
-    // }
 }
 
-pub async fn drop_collection<T: DbResource>(db: &Database) -> HttpResponse {
+pub async fn drop_collection<T: DbResource>(db: &Database) -> Result<()> {
     let collection: Collection<Document> = db.collection(T::COLLECTION);
-    collection.drop(None).await.unwrap();
-    HttpResponse::Ok().body("successfully deleted!")
+    collection.drop(None).await?;
+    Ok(())
 }
 
-pub async fn delete_by_id<T>(db: &Database, id: &str) -> HttpResponse
+pub async fn delete_by_id<T>(db: &Database, id: &str) -> Result<DeleteResult>
 where
     T: DbResource,
 {
-    let obj_id = ObjectId::parse_str(id).unwrap();
-    let filter = create_query_id(&obj_id);
-    // let filter = doc! {"_id": &obj_id};
+    let filter = create_query_id(id);
     let collection: Collection<T> = db.collection(T::COLLECTION);
     let result = collection
         .delete_one(filter, None)
-        .await
-        .expect("failed deleting");
-    if result.deleted_count == 1 {
-        HttpResponse::Ok().json(&"successfully deleted!")
-    } else {
-        HttpResponse::NotFound().json(&format!("item with specified ID {obj_id} not found!"))
-    }
+        .await?;
+    Ok(result)
 }
-pub async fn get_by_id<T>(db: &Database, id: &str) -> HttpResponse
+pub async fn get_by_id<T>(db: &Database, id: &str) -> Result<Option<T>>
 where
     T: DbResource + DeserializeOwned + Serialize + Sync + Send + Unpin,
 {
     let collection: Collection<T> = db.collection(T::COLLECTION);
-    let obj_id = ObjectId::parse_str(id).unwrap();
-    let filter = doc! {"_id": obj_id};
-    let result = collection.find_one(filter, None).await;
-    match result {
-        Ok(Some(payload)) => HttpResponse::Ok().json(&payload),
-        Ok(None) => HttpResponse::NotFound().json(&format!("No item found with id {obj_id}")),
-        Err(err) => HttpResponse::InternalServerError().json(&err.to_string()),
-    }
+    let filter = create_query_id(id);
+    let result = collection.find_one(filter, None).await?;
+    Ok(result)
 }
 
-pub async fn update_by_id<T, U>(db: &Database, body: U, id: &str) -> HttpResponse
+pub async fn update_by_id<T, U>(db: &Database, body: U, id: &str) -> Result<Option<Document>>
 where
     T: DbResource + DeserializeOwned + Serialize,
-    U: DeserializeOwned + Serialize + Validate,
+    U: DeserializeOwned + Serialize,
 {
-    if let Err(response) = validate_request_body(&body) {
-        return response; // Returns early if validation fails
-    }
-    let obj_id = ObjectId::parse_str(id).unwrap();
-    let filter = doc! {"_id": obj_id};
+    let filter = create_query_id(id);
     let collection: Collection<Document> = db.collection(T::COLLECTION);
     let serialized_item = to_document(&body).expect("Error serializing item");
     let new_doc = doc! {
@@ -116,69 +73,10 @@ where
         .build();
     let result = collection
         .find_one_and_update(filter, new_doc, options)
-        .await
-        .unwrap();
-    match result {
-        Some(payload) => {
-            let doc: T = from_document(payload).unwrap();
-            HttpResponse::Created().json(&doc)
-        }
-        None => HttpResponse::NotFound().json(&format!("not found item with ID {id}")),
-    }
-}
-
-// Define a structure for the request body
-#[derive(Deserialize)]
-struct MyRequestBody {
-    field: String,
-}
-
-// async fn validate_body<S>(
-//     req: web::HttpRequest,
-//     mut payload: web::Payload<S>,
-// ) -> Result<web::HttpRequest, HttpResponse> {
-//     let body = web::types::Json::<MyRequestBody>::from_request(&req, &mut payload).await;
-//
-//     match body {
-//         Ok(_) => Ok(req),
-//         Err(e) => Err(HttpResponse::BadRequest().body(e.to_string())),
-//     }
-// }
-
-pub async fn update_by_id_v1<T, U>(db: &Database, body: U, id: &str) -> Result<Document>
-where
-    T: DbResource + DeserializeOwned + Serialize + Sync + Send + Unpin,
-    U: DeserializeOwned + Serialize + Sync + Send + Unpin + Validate,
-{
-    body.validate()
-        .map(|a| {})
-        .map_err(|e| HttpResponse::BadRequest().body(e.to_string()));
-    // if let Err(response) = validate_request_body(&body) {
-    //     return response; // Returns early if validation fails
-    // }
-    let obj_id = ObjectId::parse_str(id).unwrap();
-    let filter = doc! {"_id": obj_id};
-    let collection: Collection<Document> = db.collection(T::COLLECTION);
-    let serialized_item = to_document(&body).expect("Error serializing item");
-    let new_doc = doc! {
-        "$set": serialized_item
-    };
-    let options = FindOneAndUpdateOptions::builder()
-        .return_document(ReturnDocument::After)
-        .build();
-    let result = collection
-        .find_one_and_update(filter, new_doc, options)
-        .await?
-        .unwrap();
+        .await?;
     Ok(result)
-    // match result {
-    //     Some(payload) => {
-    //         let doc: T = from_document(payload).unwrap();
-    //         HttpResponse::Created().json(&doc)
-    //     }
-    //     None => HttpResponse::NotFound().json(&format!("not found item with ID {id}")),
-    // }
 }
+
 
 #[cfg(test)]
 mod tests {

@@ -1,27 +1,9 @@
 use ntex::web;
-// use ntex::web::HttpResponse;
 use super::handlers::{create, delete, drop, get_item, get_list, update};
 use proc_macros::DbResource;
 use serde::{de::DeserializeOwned, Serialize};
 use services::mongo::query_param_processing::QueryParamProcessing;
 use validator::Validate;
-
-// enum RouteType {
-//     Get,
-//     Post,
-//     Put,
-//     Delete,
-// }
-//
-// struct RouteConfig {
-//     route_type: RouteType,
-//     handler: fn() -> HttpResponse,
-// }
-// pub fn das() -> impl FnOnce() -> i32 -> {
-//     || {
-//
-//     }
-// }
 
 pub fn generic_routes<T, C, U, Q>(cfg: &mut web::ServiceConfig)
 where

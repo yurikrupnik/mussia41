@@ -1,10 +1,7 @@
 use super::api::todo::controller as todo;
 use super::api::todo::model::{NewTodo, Todo, Update};
 use super::services::error::HttpError;
-use super::users::{
-    model::{NewUser, UpdateUser, User},
-    
-};
+use super::users::model::{NewUser, UpdateUser, User};
 use utoipa::OpenApi;
 
 /// Main structure to generate OpenAPI documentation

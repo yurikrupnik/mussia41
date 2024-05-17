@@ -27,7 +27,12 @@ pub async fn get_todo(app_state: State<AppState>, id: Path<String>) -> HttpRespo
     let db = &app_state.db;
     // let query = query.into_inner();
     // let (filter, options) = construct_find_options_and_filter(query.clone()).unwrap();
-    get_by_id::<Todo>(db, &item_id).await
+    let result = get_by_id::<Todo>(db, &item_id).await;
+    match result {
+        Ok(Some(payload)) => HttpResponse::Ok().json(&payload),
+        Ok(None) => HttpResponse::NotFound().json(&format!("No item found with id {item_id}")),
+        Err(err) => HttpResponse::InternalServerError().json(&err.to_string()),
+    }
 }
 
 /// List all todos
@@ -77,15 +82,12 @@ pub async fn create_todo(body: Json<NewTodo>, app_state: State<AppState>) -> Htt
         return response; // Returns early if validation fails
     }
     let response = create_item::<Todo, NewTodo>(db, body).await;
-    // HttpResponse::Created().json(&doc)
     match response {
         Ok(Some(payload)) => {
             let doc: Todo = from_document(payload).expect("error 5");
             HttpResponse::Created().json(&doc)
         }
-        Ok(None) => {
-            HttpResponse::NotFound().json::<String>(&format!("No user found with id"))
-        }
+        Ok(None) => HttpResponse::NotFound().json::<String>(&format!("No user found with id")),
         Err(err) => HttpResponse::InternalServerError().json(&err.to_string()),
     }
 }
@@ -103,7 +105,20 @@ pub async fn create_todo(body: Json<NewTodo>, app_state: State<AppState>) -> Htt
 pub async fn delete_todo(app_state: State<AppState>, id: Path<String>) -> HttpResponse {
     let item_id = id.into_inner();
     let db = &app_state.db;
-    delete_by_id::<Todo>(db, &item_id).await
+    let result = delete_by_id::<Todo>(db, &item_id).await;
+    match result {
+        Ok(delete_result) => {
+            if delete_result.deleted_count == 1 {
+                HttpResponse::Ok().json(&"successfully deleted!")
+            } else {
+                HttpResponse::NotFound()
+                    .json(&format!("item with specified ID {item_id} not found!"))
+            }
+        }
+        Err(_) => {
+            HttpResponse::NotFound().json(&format!("item with specified ID {item_id} not found!"))
+        }
+    }
 }
 
 /// Delete all `Todo`
@@ -117,7 +132,8 @@ pub async fn delete_todo(app_state: State<AppState>, id: Path<String>) -> HttpRe
 )]
 pub async fn drop_todos(app_state: State<AppState>) -> HttpResponse {
     let db = &app_state.db;
-    drop_collection::<Todo>(db).await
+    drop_collection::<Todo>(db).await.expect("das");
+    HttpResponse::Ok().body("successfully deleted!")
 }
 
 /// Update a `Todo` by id and `Update` struct.
@@ -137,10 +153,19 @@ pub async fn update_todo(
     body: Json<Update>,
 ) -> HttpResponse {
     let body = body.into_inner();
-    let item_id = id.into_inner();
-    let db = &app_state.db;
     if let Err(response) = validate_request_body(&body) {
         return response; // Returns early if validation fails
     }
-    update_by_id::<Todo, Update>(db, body, &item_id).await
+    let item_id = id.into_inner();
+    let db = &app_state.db;
+    let result = update_by_id::<Todo, Update>(db, body, &item_id)
+        .await
+        .unwrap();
+    match result {
+        Some(payload) => {
+            let doc: Todo = from_document(payload).unwrap();
+            HttpResponse::Created().json(&doc)
+        }
+        None => HttpResponse::NotFound().json(&format!("not found item with ID {item_id}")),
+    }
 }

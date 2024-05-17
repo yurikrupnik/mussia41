@@ -19,7 +19,8 @@ use validator::Validate;
 /// Resets body and db on webserver state
 pub async fn drop<T: DbResource>(app_state: State<AppState>) -> impl Responder {
     let db = &app_state.db;
-    drop_collection::<T>(db).await
+    drop_collection::<T>(db).await.expect("TODO: panic message");
+    HttpResponse::Ok().body("successfully deleted!")
 }
 
 /// Create new generic CRUD (create) function.
@@ -46,13 +47,23 @@ where
 }
 
 /// Delete `Project` by ID
-pub async fn delete<T>(app_state: State<AppState>, id: Path<String>) -> impl Responder
+pub async fn delete<T>(app_state: State<AppState>, id: Path<String>) -> HttpResponse
 where
     T: DbResource,
 {
     let item_id = id.into_inner();
     let db = &app_state.db;
-    delete_by_id::<T>(db, &item_id).await
+    let result = delete_by_id::<T>(db, &item_id).await;
+    match result {
+        Ok(_) => HttpResponse::Ok().json(&"successfully deleted!"),
+        Err(_) => HttpResponse::NotFound().json(&format!("item with specified ID {item_id} not found!"))
+    }
+    // todo test and delete then
+    // if result.deleted_count == 1 {
+    //     HttpResponse::Ok().json(&"successfully deleted!")
+    // } else {
+    //     HttpResponse::NotFound().json(&format!("item with specified ID {obj_id} not found!"))
+    // }
 }
 
 /// Get `Project` by ID
@@ -63,7 +74,12 @@ where
 {
     let item_id = id.into_inner();
     let db = &app_state.db;
-    get_by_id::<T>(db, &item_id).await
+    let result = get_by_id::<T>(db, &item_id).await;
+    match result {
+        Ok(Some(payload)) => HttpResponse::Ok().json(&payload),
+        Ok(None) => HttpResponse::NotFound().json(&format!("No item found with id {item_id}")),
+        Err(err) => HttpResponse::InternalServerError().json(&err.to_string()),
+    }
 }
 
 /// Update `Project` by `UpdateProject` struct
@@ -79,7 +95,14 @@ where
     let body = body.into_inner();
     let item_id = id.into_inner();
     let db = &app_state.db;
-    update_by_id::<T, U>(db, body, &item_id).await
+    let result = update_by_id::<T, U>(db, body, &item_id).await.expect("ass and shit");
+    match result {
+        Some(payload) => {
+            let doc: T = from_document(payload).unwrap();
+            HttpResponse::Created().json(&doc)
+        }
+        None => HttpResponse::NotFound().json(&format!("not found item with ID {item_id}")),
+    }
 }
 
 /// Get list by `T` and `Q`
