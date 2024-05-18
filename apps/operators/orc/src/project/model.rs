@@ -1,7 +1,7 @@
 use crate::users::model::User;
 use mongodb::bson::oid::ObjectId;
 use proc_macros::DbResource;
-use serde::{Deserialize, Deserializer, Serialize, Serializer};
+use serde::{Deserialize, Serialize};
 use serde_json::json;
 use services::mongo::{
     query_param_processing::QueryParamProcessing,

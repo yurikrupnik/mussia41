@@ -10,6 +10,7 @@ use generic_api::config::generic_routes;
 // use project::model::{NewProject, Project, ProjectListQuery, UpdateProject};
 use api::services::model::{NewService, Service, ServiceListQuery, UpdateService};
 use api::todo::config::todo_routes;
+use api::services::config::services_routes;
 use users::model::{NewUser, UpdateUser, User, UserListQuery};
 // use users::model::{NewUser, UpdateProfile, User};
 // use bb8_redis::redis::AsyncCommands;
@@ -54,6 +55,7 @@ async fn main() -> std::io::Result<()> {
             .state(state.clone())
             .service(hello)
             .configure(todo_routes)
+            .configure(services_routes)
             // .configure(generic_routes::<Project, NewProject, UpdateProject, ProjectListQuery>)
             .configure(generic_routes::<Service, NewService, UpdateService, ServiceListQuery>)
             .configure(generic_routes::<User, NewUser, UpdateUser, UserListQuery>)

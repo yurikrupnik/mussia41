@@ -22,8 +22,8 @@ impl ToSocketAddrs for WebUrl {
     type Iter = std::vec::IntoIter<SocketAddr>;
     fn to_socket_addrs(&self) -> io::Result<Self::Iter> {
         match self {
-            WebUrl::Address(ip, port) => {
-                let addr = SocketAddr::new((*ip).into(), *port);
+            WebUrl::Address(_ip, port) => {
+                let addr = SocketAddr::new((*_ip).into(), *port);
                 Ok(vec![addr].into_iter())
             }
             WebUrl::AddressString(s) => s.to_socket_addrs(),
