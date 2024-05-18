@@ -4,28 +4,16 @@ mod services;
 mod swagger;
 mod users;
 
+use api::routes;
 use bb8::Pool;
 use bb8_redis::bb8;
-use generic_api::config::generic_routes;
-// use project::model::{NewProject, Project, ProjectListQuery, UpdateProject};
-use api::services::model::{NewService, Service, ServiceListQuery, UpdateService};
-use api::todo::config::todo_routes;
-use api::services::config::services_routes;
-use users::model::{NewUser, UpdateUser, User, UserListQuery};
-// use users::model::{NewUser, UpdateProfile, User};
-// use bb8_redis::redis::AsyncCommands;
 use bb8_redis::RedisConnectionManager;
 use general::socket_addrs::get_web_url;
 use general::{get_mongo_uri, get_redis_uri};
 use mongodb::Client;
-use ntex::web::{self, HttpResponse, Responder};
+use ntex::web::{self, App, HttpResponse};
 use shared::app_state::AppState;
 use swagger::ApiDoc;
-
-#[web::get("/")]
-async fn hello() -> impl Responder {
-    HttpResponse::Ok().body("Hello world!!")
-}
 
 async fn default() -> HttpResponse {
     HttpResponse::NotFound().finish()
@@ -53,12 +41,7 @@ async fn main() -> std::io::Result<()> {
             .wrap(web::middleware::Logger::default())
             .state(json_config)
             .state(state.clone())
-            .service(hello)
-            .configure(todo_routes)
-            .configure(services_routes)
-            // .configure(generic_routes::<Project, NewProject, UpdateProject, ProjectListQuery>)
-            .configure(generic_routes::<Service, NewService, UpdateService, ServiceListQuery>)
-            .configure(generic_routes::<User, NewUser, UpdateUser, UserListQuery>)
+            .configure(routes)
             .default_service(web::route().to(default))
     })
     .bind(get_web_url(false))?
@@ -69,23 +52,23 @@ async fn main() -> std::io::Result<()> {
 
 #[cfg(test)]
 mod tests {
-    // use ntex::web;
-    // use ntex::web::test;
-    //
-    // use super::*;
+    use super::api::todo::controller::get_todo;
+    use ntex::web::test;
+
     // #[ntex::test]
-    // async fn test_index_get() {
-    //     let app = test::init_service(web::App::new().route("/", web::get().to(index))).await;
-    //     let req = test::TestRequest::get().uri("/").to_request();
-    //     let resp = test::call_service(&app, req).await;
-    //     assert!(resp.status().is_success());
+    // async fn test_index_ok() {
+    //     let req = test::TestRequest::default()
+    //         .header("content-type", "text/plain")
+    //         .uri("/api/todo")
+    //         .to_http_request();
+    //     let resp = get_todo(req).await;
+    //     assert_eq!(resp.status(), http::StatusCode::OK);
     // }
-    //
+
     // #[ntex::test]
-    // async fn test_index_post() {
-    //     let app = test::init_service(web::App::new().route("/", web::get().to(index))).await;
-    //     let req = test::TestRequest::post().uri("/").to_request();
-    //     let resp = test::call_service(&app, req).await;
-    //     assert!(resp.status().is_client_error());
+    // async fn test_index_not_ok() {
+    //     let req = test::TestRequest::default().to_http_request();
+    //     let resp = get_todo(req).await;
+    //     assert_eq!(resp.status(), http::StatusCode::BAD_REQUEST);
     // }
 }

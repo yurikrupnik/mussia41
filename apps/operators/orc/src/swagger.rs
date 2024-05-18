@@ -1,7 +1,21 @@
-use super::api::todo::controller as todo;
-use super::api::todo::model::{NewTodo, Todo, Update};
-use super::api::services::controller as service;
-use super::api::services::model::{Service, UpdateService, NewService};
+// use super::api::todo::controller as todo;
+// use super::api::todo::model::{NewTodo, Todo, Update};
+// use super::api::services::controller as service;
+// use super::api::services::model::{Service, UpdateService, NewService};
+use super::api::{
+    book::{
+        controller as book,
+        model::{Book, NewBook, UpdateBook},
+    },
+    services::{
+        controller as service,
+        model::{NewService, Service, UpdateService},
+    },
+    todo::{
+        controller as todo,
+        model::{NewTodo, Todo, Update},
+    },
+};
 use super::services::error::HttpError;
 use super::users::model::{NewUser, UpdateUser, User};
 use utoipa::OpenApi;
@@ -22,8 +36,28 @@ use utoipa::OpenApi;
         service::update_service,
         service::delete_service,
         service::drop_services,
+        book::get_book,
+        book::get_books,
+        book::create_book,
+        book::create_book,
+        book::update_book,
+        book::delete_book,
+        book::drop_books,
     ),
-    components(schemas(HttpError, 
-        User, UpdateUser, NewUser, Todo, NewTodo, Update, Service, UpdateService, NewService))
+    components(schemas(
+        HttpError,
+        User,
+        UpdateUser,
+        NewUser,
+        Todo,
+        NewTodo,
+        Update,
+        Service,
+        UpdateService,
+        NewService,
+        Book,
+        UpdateBook,
+        NewBook
+    ))
 )]
 pub(crate) struct ApiDoc;

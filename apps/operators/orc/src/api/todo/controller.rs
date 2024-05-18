@@ -15,8 +15,8 @@ use shared::validation::validate_request_body;
 /// Get a todo by id
 #[utoipa::path(
     get,
-    path = "/todo/{id}",
-    tag = "Todo",
+    path = "/api/todo/{id}",
+    tag = Todo::TAG,
     responses(
         (status = 200, description = "Todo found", body = Todo),
         (status = 404, description = "Todo not found", body = HttpError),
@@ -38,8 +38,8 @@ pub async fn get_todo(app_state: State<AppState>, id: Path<String>) -> HttpRespo
 /// List all todos
 #[utoipa::path(
     get,
-    path = "/todo",
-    tag = "Todo",
+    path = "/api/todo",
+    tag = Todo::TAG,
     params(TodoListQuery),
     responses(
         (status = 200, description = "List of Todo", body = [Todo]),
@@ -68,8 +68,8 @@ pub async fn get_todos(app_state: State<AppState>, query: Query<TodoListQuery>) 
 /// Create a new todo
 #[utoipa::path(
     post,
-    path = "/todo",
-    tag = "Todo",
+    path = "/api/todo",
+    tag = Todo::TAG,
     request_body = NewTodo,
     responses(
     (status = 201, description = "Todo created", body = Todo),
@@ -95,8 +95,8 @@ pub async fn create_todo(body: Json<NewTodo>, app_state: State<AppState>) -> Htt
 /// Delete `Todo` by ID
 #[utoipa::path(
   delete,
-  path = "/todo/{id}",
-  tag = "Todo",
+  path = "/api/todo/{id}",
+  tag = Todo::TAG,
   responses(
     (status = 200, description = "Todo deleted", body = String),
     (status = 404, description = "Todo not found", body = HttpError),
@@ -124,8 +124,8 @@ pub async fn delete_todo(app_state: State<AppState>, id: Path<String>) -> HttpRe
 /// Delete all `Todo`
 #[utoipa::path(
     delete,
-    path = "/todo",
-    tag = "Todo",
+    path = "/api/todo",
+    tag = Todo::TAG,
     responses(
         (status = 200, description = "Todo deleted", body = String),
     ),
@@ -139,8 +139,8 @@ pub async fn drop_todos(app_state: State<AppState>) -> HttpResponse {
 /// Update a `Todo` by id and `Update` struct.
 #[utoipa::path(
     put,
-    path = "/todo/{id}",
-    tag = "Todo",
+    path = "/api/todo/{id}",
+    tag = Todo::TAG,
     request_body = Update,
     responses(
     (status = 200, description = "Todo updated", body = Todo),

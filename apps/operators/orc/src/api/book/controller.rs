@@ -1,4 +1,4 @@
-use super::model::{NewService, Service, ServiceListQuery, UpdateService};
+use super::model::{Book, BookListQuery, NewBook, UpdateBook};
 use futures::TryStreamExt;
 use mongodb::bson::{doc, from_document};
 use mongodb::Collection;
@@ -12,22 +12,22 @@ use services::mongo::service::{
 use shared::app_state::AppState;
 use shared::validation::validate_request_body;
 
-/// Get a todo by id
+/// Get a book by id
 #[utoipa::path(
     get,
-    path = "/api/service/{id}",
-    tag = Service::TAG,
+    path = "/api/book/{id}",
+    tag = Book::TAG,
     responses(
-        (status = 200, description = "Service found", body = Service),
-        (status = 404, description = "Service not found", body = HttpError),
+        (status = 200, description = "Book found", body = Book),
+        (status = 404, description = "Book not found", body = HttpError),
     ),
 )]
-pub async fn get_service(app_state: State<AppState>, id: Path<String>) -> HttpResponse {
+pub async fn get_book(app_state: State<AppState>, id: Path<String>) -> HttpResponse {
     let item_id = id.into_inner();
     let db = &app_state.db;
     // let query = query.into_inner();
     // let (filter, options) = construct_find_options_and_filter(query.clone()).unwrap();
-    let result = get_by_id::<Service>(db, &item_id).await;
+    let result = get_by_id::<Book>(db, &item_id).await;
     match result {
         Ok(Some(payload)) => HttpResponse::Ok().json(&payload),
         Ok(None) => HttpResponse::NotFound().json(&format!("No item found with id {item_id}")),
@@ -35,29 +35,26 @@ pub async fn get_service(app_state: State<AppState>, id: Path<String>) -> HttpRe
     }
 }
 
-/// List all services
+/// List all books
 #[utoipa::path(
     get,
-    path = "/api/service",
-    tag = Service::TAG,
-    params(ServiceListQuery),
+    path = "/api/book",
+    tag = Book::TAG,
+    params(BookListQuery),
     responses(
-        (status = 200, description = "List of Todo", body = [Todo]),
+        (status = 200, description = "List of books", body = [Book]),
     ),
 )]
-pub async fn get_services(
-    app_state: State<AppState>,
-    query: Query<ServiceListQuery>,
-) -> HttpResponse {
+pub async fn get_books(app_state: State<AppState>, query: Query<BookListQuery>) -> HttpResponse {
     let query = query.into_inner();
     let (filter, options) = construct_find_options_and_filter(query.clone()).unwrap();
     let db = &app_state.db;
-    let collection: Collection<Service> = db.collection(Service::COLLECTION);
+    let collection: Collection<Book> = db.collection(Book::COLLECTION);
     let mut cursor = collection
         .find(filter, options)
         .await
         .expect("failed fetching");
-    let mut payload: Vec<Service> = Vec::new();
+    let mut payload: Vec<Book> = Vec::new();
     while let Some(item) = cursor
         .try_next()
         .await
@@ -68,26 +65,26 @@ pub async fn get_services(
     HttpResponse::Ok().json(&payload)
 }
 
-/// Create a new service
+/// Create a new Book
 #[utoipa::path(
     post,
-    path = "/api/service",
-    tag = Service::TAG,
-    request_body = NewService,
+    path = "/api/book",
+    tag = Book::TAG,
+    request_body = NewBook,
     responses(
     (status = 201, description = "Todo created", body = Todo),
     ),
 )]
-pub async fn create_service(body: Json<NewService>, app_state: State<AppState>) -> HttpResponse {
+pub async fn create_book(body: Json<NewBook>, app_state: State<AppState>) -> HttpResponse {
     let body = body.into_inner();
     let db = &app_state.db;
     if let Err(response) = validate_request_body(&body) {
         return response; // Returns early if validation fails
     }
-    let response = create_item::<Service, NewService>(db, body).await;
+    let response = create_item::<Book, NewBook>(db, body).await;
     match response {
         Ok(Some(payload)) => {
-            let doc: Service = from_document(payload).expect("error 5");
+            let doc: Book = from_document(payload).expect("error 5");
             HttpResponse::Created().json(&doc)
         }
         Ok(None) => HttpResponse::NotFound().json::<String>(&format!("No user found with id")),
@@ -95,20 +92,20 @@ pub async fn create_service(body: Json<NewService>, app_state: State<AppState>) 
     }
 }
 
-/// Delete `Service` by ID
+/// Delete `Book` by ID
 #[utoipa::path(
   delete,
-  path = "/api/service/{id}",
-  tag = Service::TAG,
+  path = "/api/book/{id}",
+  tag = Book::TAG,
   responses(
-    (status = 200, description = "Service deleted", body = String),
-    (status = 404, description = "Service not found", body = HttpError),
+    (status = 200, description = "Book deleted", body = String),
+    (status = 404, description = "Book not found", body = HttpError),
   ),
 )]
-pub async fn delete_service(app_state: State<AppState>, id: Path<String>) -> HttpResponse {
+pub async fn delete_book(app_state: State<AppState>, id: Path<String>) -> HttpResponse {
     let item_id = id.into_inner();
     let db = &app_state.db;
-    let result = delete_by_id::<Service>(db, &item_id).await;
+    let result = delete_by_id::<Book>(db, &item_id).await;
     match result {
         Ok(delete_result) => {
             if delete_result.deleted_count == 1 {
@@ -124,36 +121,36 @@ pub async fn delete_service(app_state: State<AppState>, id: Path<String>) -> Htt
     }
 }
 
-/// Delete all `Service`
+/// Delete all `Book`
 #[utoipa::path(
     delete,
-    path = "/api/service",
-    tag = Service::TAG,
+    path = "/api/book",
+    tag = Book::TAG,
     responses(
-        (status = 200, description = "Todo deleted", body = String),
+        (status = 200, description = "Book deleted", body = String),
     ),
 )]
-pub async fn drop_services(app_state: State<AppState>) -> HttpResponse {
+pub async fn drop_books(app_state: State<AppState>) -> HttpResponse {
     let db = &app_state.db;
-    drop_collection::<Service>(db).await.expect("das");
+    drop_collection::<Book>(db).await.expect("das");
     HttpResponse::Ok().body("successfully deleted!")
 }
 
-/// Update a `Service` by id and `UpdateService` struct.
+/// Update a `Book` by id and `UpdateBook` struct.
 #[utoipa::path(
     put,
-    path = "/api/service/{id}",
-    tag = Service::TAG,
-    request_body = UpdateService,
+    path = "/api/book/{id}",
+    tag = Book::TAG,
+    request_body = UpdateBook,
     responses(
-    (status = 200, description = "Service updated", body = Service),
-    (status = 404, description = "Service not found", body = HttpError),
+    (status = 200, description = "Book updated", body = Book),
+    (status = 404, description = "Book not found", body = HttpError),
     ),
 )]
-pub async fn update_service(
+pub async fn update_book(
     id: Path<String>,
     app_state: State<AppState>,
-    body: Json<UpdateService>,
+    body: Json<UpdateBook>,
 ) -> HttpResponse {
     let body = body.into_inner();
     if let Err(response) = validate_request_body(&body) {
@@ -161,12 +158,12 @@ pub async fn update_service(
     }
     let item_id = id.into_inner();
     let db = &app_state.db;
-    let result = update_by_id::<Service, UpdateService>(db, body, &item_id)
+    let result = update_by_id::<Book, UpdateBook>(db, body, &item_id)
         .await
         .unwrap();
     match result {
         Some(payload) => {
-            let doc: Service = from_document(payload).unwrap();
+            let doc: Book = from_document(payload).unwrap();
             HttpResponse::Created().json(&doc)
         }
         None => HttpResponse::NotFound().json(&format!("not found item with ID {item_id}")),

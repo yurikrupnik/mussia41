@@ -25,8 +25,9 @@ where
     let result = collection
         .insert_one(document, None)
         .await?;
-    let sd = result.inserted_id.as_str().expect("error 1");
-    let response = collection.find_one(create_query_id(sd), None).await?;
+    let object_id = result.inserted_id.as_object_id().expect("error 1");
+    let filter = doc! {"_id": object_id};
+    let response = collection.find_one(filter, None).await?;
     Ok(response)
 }
 
