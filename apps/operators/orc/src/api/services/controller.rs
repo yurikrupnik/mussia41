@@ -12,7 +12,7 @@ use services::mongo::service::{
 use shared::app_state::AppState;
 use shared::validation::validate_request_body;
 
-/// Get a todo by id
+/// Get a `Service` by id
 #[utoipa::path(
     get,
     path = "/api/service/{id}",
@@ -42,7 +42,7 @@ pub async fn get_service(app_state: State<AppState>, id: Path<String>) -> HttpRe
     tag = Service::TAG,
     params(ServiceListQuery),
     responses(
-        (status = 200, description = "List of Todo", body = [Todo]),
+        (status = 200, description = "List of Service", body = [Service]),
     ),
 )]
 pub async fn get_services(
@@ -75,7 +75,7 @@ pub async fn get_services(
     tag = Service::TAG,
     request_body = NewService,
     responses(
-    (status = 201, description = "Todo created", body = Todo),
+    (status = 201, description = "Service created", body = Service),
     ),
 )]
 pub async fn create_service(body: Json<NewService>, app_state: State<AppState>) -> HttpResponse {
@@ -130,7 +130,7 @@ pub async fn delete_service(app_state: State<AppState>, id: Path<String>) -> Htt
     path = "/api/service",
     tag = Service::TAG,
     responses(
-        (status = 200, description = "Todo deleted", body = String),
+        (status = 200, description = "Service deleted", body = String),
     ),
 )]
 pub async fn drop_services(app_state: State<AppState>) -> HttpResponse {

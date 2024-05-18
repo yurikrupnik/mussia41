@@ -1,8 +1,5 @@
 mod api;
-mod project;
-mod services;
 mod swagger;
-mod users;
 
 use api::routes;
 use bb8::Pool;
@@ -11,9 +8,10 @@ use bb8_redis::RedisConnectionManager;
 use general::socket_addrs::get_web_url;
 use general::{get_mongo_uri, get_redis_uri};
 use mongodb::Client;
-use ntex::web::{self, App, HttpResponse};
+use ntex::web::{self, HttpResponse};
 use shared::app_state::AppState;
 use swagger::ApiDoc;
+use services::swagger::ntex::ntex_config;
 
 async fn default() -> HttpResponse {
     HttpResponse::NotFound().finish()
@@ -37,7 +35,7 @@ async fn main() -> std::io::Result<()> {
         let json_config = web::types::JsonConfig::default().limit(4096);
         web::App::new()
             // Register swagger endpoints
-            .configure(services::openapi::ntex_config::<ApiDoc>)
+            .configure(ntex_config::<ApiDoc>)
             .wrap(web::middleware::Logger::default())
             .state(json_config)
             .state(state.clone())

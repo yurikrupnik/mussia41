@@ -7,14 +7,16 @@ use services::mongo::{
 };
 use utoipa::{IntoParams, ToSchema};
 use validator::Validate;
+use ts_rs::TS;
 
-#[derive(Clone, ToSchema, Debug, PartialEq, Eq, Deserialize, Serialize, Validate, DbResource)]
+#[derive(Clone, ToSchema, Debug, PartialEq, Eq, Deserialize, Serialize, Validate, DbResource, TS)]
 #[serde(rename_all = "camelCase")]
 pub struct Service {
     #[serde(
         rename(deserialize = "_id"),
         serialize_with = "serialize_option_object_id"
     )]
+    #[ts(type = "string")]
     pub id: Option<ObjectId>,
     pub name: Option<String>,
 }

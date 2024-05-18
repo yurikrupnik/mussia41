@@ -1,9 +1,8 @@
-use super::error::HttpError;
+use crate::errors::ntex::HttpError;
 use ntex::{http, util::Bytes, web};
 use std::sync::Arc;
 use utoipa::OpenApi;
 
-// #[web::get("/{tail}*")]
 async fn get_swagger<T: OpenApi>(
     tail: web::types::Path<String>,
     openapi_conf: web::types::State<Arc<utoipa_swagger_ui::Config<'static>>>,
@@ -36,8 +35,8 @@ async fn get_swagger<T: OpenApi>(
 }
 
 pub fn ntex_config<T>(config: &mut web::ServiceConfig)
-where
-    T: OpenApi + 'static,
+    where
+        T: OpenApi + 'static,
 {
     let swagger_config =
         Arc::new(utoipa_swagger_ui::Config::new(["/explorer/swagger.json"]).use_base_layout());

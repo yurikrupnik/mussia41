@@ -4890,6 +4890,8 @@ dependencies = [
  "serde",
  "serde_json",
  "shared",
+ "utoipa",
+ "utoipa-swagger-ui",
  "validator",
 ]
 

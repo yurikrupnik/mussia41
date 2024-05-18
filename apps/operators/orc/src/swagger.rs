@@ -1,7 +1,3 @@
-// use super::api::todo::controller as todo;
-// use super::api::todo::model::{NewTodo, Todo, Update};
-// use super::api::services::controller as service;
-// use super::api::services::model::{Service, UpdateService, NewService};
 use super::api::{
     book::{
         controller as book,
@@ -15,9 +11,14 @@ use super::api::{
         controller as todo,
         model::{NewTodo, Todo, Update},
     },
+    users::{
+        model::{NewUser, UpdateUser, User}
+    },
+    project::{
+        model::{NewProject, Project, UpdateProject}
+    }
 };
-use super::services::error::HttpError;
-use super::users::model::{NewUser, UpdateUser, User};
+use services::errors::ntex::HttpError;
 use utoipa::OpenApi;
 
 /// Main structure to generate OpenAPI documentation
@@ -39,10 +40,15 @@ use utoipa::OpenApi;
         book::get_book,
         book::get_books,
         book::create_book,
-        book::create_book,
         book::update_book,
         book::delete_book,
         book::drop_books,
+        // project::get_project,
+        // project::get_projects,
+        // project::create_project,
+        // project::update_project,
+        // project::delete_project,
+        // project::drop_projects,
     ),
     components(schemas(
         HttpError,
@@ -57,7 +63,10 @@ use utoipa::OpenApi;
         NewService,
         Book,
         UpdateBook,
-        NewBook
+        NewBook,
+        NewProject,
+        Project,
+        UpdateProject
     ))
 )]
 pub(crate) struct ApiDoc;

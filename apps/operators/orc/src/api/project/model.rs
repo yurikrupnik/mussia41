@@ -1,4 +1,4 @@
-use crate::users::model::User;
+use crate::api::users::model::User;
 use mongodb::bson::oid::ObjectId;
 use proc_macros::DbResource;
 use serde::{Deserialize, Serialize};
