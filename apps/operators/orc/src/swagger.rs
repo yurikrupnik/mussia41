@@ -1,8 +1,7 @@
+use models::book::{Book, NewBook, UpdateBook};
 use super::api::{
-    book::{
-        controller as book,
-        model::{Book, NewBook, UpdateBook},
-    },
+    book::{controller as book},
+    project::model::{NewProject, Project, UpdateProject},
     services::{
         controller as service,
         model::{NewService, Service, UpdateService},
@@ -11,12 +10,7 @@ use super::api::{
         controller as todo,
         model::{NewTodo, Todo, Update},
     },
-    users::{
-        model::{NewUser, UpdateUser, User}
-    },
-    project::{
-        model::{NewProject, Project, UpdateProject}
-    }
+    users::model::{NewUser, UpdateUser, User},
 };
 use services::errors::ntex::HttpError;
 use utoipa::OpenApi;

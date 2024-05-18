@@ -9,9 +9,10 @@ use general::socket_addrs::get_web_url;
 use general::{get_mongo_uri, get_redis_uri};
 use mongodb::Client;
 use ntex::web::{self, HttpResponse};
+use services::swagger::ntex::ntex_config;
 use shared::app_state::AppState;
 use swagger::ApiDoc;
-use services::swagger::ntex::ntex_config;
+// use services::redis::{publish::publish_message, subscribe::subscribe_to_channel};
 
 async fn default() -> HttpResponse {
     HttpResponse::NotFound().finish()
@@ -28,6 +29,18 @@ async fn main() -> std::io::Result<()> {
 
     let manager = RedisConnectionManager::new(get_redis_uri()).unwrap();
     let redis_pool = Pool::builder().build(manager).await.unwrap();
+
+    // let sub_channel_name = "my_channel".to_string();
+    // tokio::spawn(async move {
+    //     subscribe_to_channel(&sub_channel_name).await.unwrap();
+    // });
+    // // Small delay to ensure the subscriber is ready (not ideal in production)
+    // tokio::time::sleep(tokio::time::Duration::from_secs(1)).await;
+    //
+    // // Publish a message
+    // if let Err(e) = publish_message(&redis_pool, "my_channel", "Hello, world!").await {
+    //     println!("Error publishing message: {}", e);
+    // }
 
     let state = AppState::new(db, redis_pool);
 

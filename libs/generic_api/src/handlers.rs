@@ -39,9 +39,8 @@ where
             let doc: T = from_document(payload).expect("error 5");
             HttpResponse::Created().json(&doc)
         }
-        Ok(None) => {
-            HttpResponse::NotFound().json::<String>(&format!("No user could be created from the data"))
-        }
+        Ok(None) => HttpResponse::NotFound()
+            .json::<String>(&format!("No user could be created from the data")),
         Err(err) => HttpResponse::InternalServerError().json(&err.to_string()),
     }
 }
@@ -56,7 +55,9 @@ where
     let result = delete_by_id::<T>(db, &item_id).await;
     match result {
         Ok(_) => HttpResponse::Ok().json(&"successfully deleted!"),
-        Err(_) => HttpResponse::NotFound().json(&format!("item with specified ID {item_id} not found!"))
+        Err(_) => {
+            HttpResponse::NotFound().json(&format!("item with specified ID {item_id} not found!"))
+        }
     }
     // todo test and delete then
     // if result.deleted_count == 1 {
@@ -95,7 +96,9 @@ where
     let body = body.into_inner();
     let item_id = id.into_inner();
     let db = &app_state.db;
-    let result = update_by_id::<T, U>(db, body, &item_id).await.expect("ass and shit");
+    let result = update_by_id::<T, U>(db, body, &item_id)
+        .await
+        .expect("ass and shit");
     match result {
         Some(payload) => {
             let doc: T = from_document(payload).unwrap();

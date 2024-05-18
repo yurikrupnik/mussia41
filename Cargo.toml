@@ -15,6 +15,7 @@ members = [
 	'apps/operators/orc',
 	'libs/proc_macros',
 	'libs/generic_api',
+	'apps/micro/book',
 ]
 
 [workspace.dependencies]

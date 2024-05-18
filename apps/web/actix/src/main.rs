@@ -29,7 +29,6 @@ async fn manual_hello() -> impl Responder {
     HttpResponse::Ok().body("Hey there!!")
 }
 
-
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
     println!("Connected to mongo");

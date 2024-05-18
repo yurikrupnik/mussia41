@@ -1,11 +1,11 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: web-actix
+  name: operators-orc
   annotations:
     "prometheus.io/scrape": "true"
   labels:
-    run: web-actix
+    run: operators-orc
 spec:
   type: ClusterIP
   ports:
@@ -14,4 +14,4 @@ spec:
       port: 8080
       targetPort: 8080
   selector:
-    app: web-actix
+    app: operators-orc

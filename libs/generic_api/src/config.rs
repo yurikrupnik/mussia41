@@ -1,5 +1,5 @@
-use ntex::web;
 use super::handlers::{create, delete, drop, get_item, get_list, update};
+use ntex::web;
 use proc_macros::DbResource;
 use serde::{de::DeserializeOwned, Serialize};
 use services::mongo::query_param_processing::QueryParamProcessing;

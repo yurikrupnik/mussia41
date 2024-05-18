@@ -5,11 +5,13 @@ use serde_json::json;
 use services::mongo::{
     query_param_processing::QueryParamProcessing, serialize::serialize_option_object_id,
 };
+use ts_rs::TS;
 use utoipa::{IntoParams, ToSchema};
 use validator::Validate;
-use ts_rs::TS;
 
-#[derive(Clone, ToSchema, Debug, PartialEq, Eq, Deserialize, Serialize, Validate, DbResource, TS)]
+#[derive(
+    Clone, ToSchema, Debug, PartialEq, Eq, Deserialize, Serialize, Validate, DbResource, TS,
+)]
 #[serde(rename_all = "camelCase")]
 pub struct Service {
     #[serde(

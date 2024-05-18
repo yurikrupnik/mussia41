@@ -1,4 +1,4 @@
-use ntex::{web, http};
+use ntex::{http, web};
 use serde::{Deserialize, Serialize};
 use utoipa::ToSchema;
 

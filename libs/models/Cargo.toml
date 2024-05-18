@@ -5,6 +5,7 @@ edition = "2021"
 
 [dependencies]
 #shared = {path = "../shared"}
+proc_macros = {workspace = true}
 services = {path = "../services"}
 ts-rs = { version = '8.1', features = ['serde-compat'] }
 serde = { version = "1.0.201", features = ["derive"] }

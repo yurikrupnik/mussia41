@@ -35,8 +35,8 @@ async fn get_swagger<T: OpenApi>(
 }
 
 pub fn ntex_config<T>(config: &mut web::ServiceConfig)
-    where
-        T: OpenApi + 'static,
+where
+    T: OpenApi + 'static,
 {
     let swagger_config =
         Arc::new(utoipa_swagger_ui::Config::new(["/explorer/swagger.json"]).use_base_layout());

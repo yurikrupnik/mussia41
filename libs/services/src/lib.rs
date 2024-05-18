@@ -1,7 +1,7 @@
+pub mod errors;
 pub mod mongo;
 pub mod redis;
 pub mod swagger;
-pub mod errors;
 
 #[cfg(test)]
 mod tests {

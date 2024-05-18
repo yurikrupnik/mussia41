@@ -1,5 +1,5 @@
 use super::controller::{create_book, delete_book, drop_books, get_book, get_books, update_book};
-use super::model::Book;
+use models::book::Book;
 use ntex::web;
 use proc_macros::DbResource;
 

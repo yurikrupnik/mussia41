@@ -1,38 +1,116 @@
-use mongodb::bson::oid::ObjectId;
+use mongodb::bson::{doc, oid::ObjectId};
+use proc_macros::DbResource;
 use serde::{Deserialize, Serialize};
+use serde_json::json;
 use services::mongo::{
-    query_param_processing::QueryParamProcessing, serialize::serialize_object_id,
+    query_param_processing::QueryParamProcessing, serialize::serialize_option_object_id,
 };
 use ts_rs::TS;
-use utoipa::ToSchema;
+use utoipa::{IntoParams, ToSchema};
 use validator::Validate;
-/// Request to update existing `Book` item.
-#[derive(Clone, ToSchema, Debug, PartialEq, Eq, Deserialize, Serialize, Validate, TS)]
-// #[serde(deny_unknown_fields)]
-#[serde(rename_all = "camelCase")]
-#[ts(export)]
+
+/// Book struct
+#[derive(Clone, ToSchema, Debug, PartialEq, Eq, Deserialize, Serialize, DbResource, TS)]
+#[schema(example = json!({"id": "6646396301dcad222bba63b3", "text": "Buy food", "completed": false}))]
 pub struct Book {
-    #[serde(rename(deserialize = "_id"), serialize_with = "serialize_object_id")]
-    #[schema(default = "000000000000000000000000")]
+    #[serde(
+        rename(deserialize = "_id"),
+        serialize_with = "serialize_option_object_id"
+    )]
     #[ts(type = "string")]
-    pub id: ObjectId,
-    // #[serde(flatten)]
-    // pub id: ObjectId,
-    #[schema(default = "Moby Dick")]
-    #[validate(length(min = 2))]
-    pub title: String,
-    #[schema(default = "Richard Bentley")]
-    pub publisher: String,
-    #[schema(default = "English")]
-    pub language: String,
-    #[serde(serialize_with = "serialize_object_id")]
-    #[schema(default = "000000000000000000000000")]
-    #[ts(type = "string")]
-    pub author_id: ObjectId,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub id: Option<ObjectId>,
+    /// Title of the book
+    #[serde(skip_serializing_if = "Option::is_none")]
+    title: Option<String>,
+    /// Amount of pages in a book
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pages: Option<u16>,
 }
 
 impl Book {
-    pub const URL: &'static str = "/book";
-    pub const COLLECTION: &'static str = "books";
-    pub const TAG: &'static str = "Books";
+    // async fn create_id_fields(client: &Client) {
+    //     // let options = IndexOptions::builder().unique(true).build();
+    //     let model = IndexModel::builder()
+    //         .keys(doc! {"title": 1u32})
+    //         // .options(options)
+    //         .build();
+    //     client
+    //         .database("sas")
+    //         .collection::<Self>("das")
+    //         .create_index(model, None)
+    //         .await
+    //         .expect("error creating index!");
+    // }
+}
+
+/// NewTodo is used to create a new `Todo`
+#[derive(Debug, Deserialize, Serialize, Validate, Clone, ToSchema, TS)]
+#[schema(example = json!({"text": "Buy drinks"}))]
+pub struct NewBook {
+    #[validate(length(min = 2))]
+    title: String,
+    #[validate(range(min = 2, max = 2000))]
+    pages: u16,
+}
+
+/// UpdateBook is used to update a `Book`
+#[derive(Debug, Deserialize, Serialize, Validate, Clone, ToSchema, TS)]
+#[schema(example = json!({"completed": true}))]
+pub struct UpdateBook {
+    #[validate(length(min = 2))]
+    #[serde(skip_serializing_if = "Option::is_none")]
+    title: Option<String>,
+    #[validate(range(min = 2, max = 2000))]
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pages: Option<u16>,
+}
+#[derive(Clone, Deserialize, Serialize, Debug, IntoParams, TS)]
+#[serde(deny_unknown_fields)]
+pub struct BookListQuery {
+    // #[serde(skip_serializing_if = "Option::is_none")]
+    // pages: Option<u16>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    title: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub limit: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub total: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub skip: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub projection: Option<String>,
+}
+
+#[derive(Clone, Deserialize, Serialize, Debug, IntoParams, TS)]
+#[serde(deny_unknown_fields)]
+pub struct BookItemQuery {
+    #[serde(skip_serializing_if = "Option::is_none")]
+    completed: Option<bool>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    text: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub projection: Option<String>,
+}
+
+impl QueryParamProcessing for BookListQuery {
+    fn get_limit(&self) -> Option<String> {
+        self.limit.clone()
+    }
+
+    fn clear_limit(&mut self) {
+        self.limit = None;
+    }
+
+    fn get_projection(&self) -> Option<String> {
+        self.projection.clone()
+    }
+
+    fn clear_projection(&mut self) {
+        self.projection = None;
+    }
+
+    fn into_inner(self) -> serde_json::Value {
+        serde_json::to_value(self).unwrap_or_else(|_| json!({}))
+    }
 }

@@ -1,12 +1,12 @@
+use anyhow::Result;
 use mongodb::bson::oid::ObjectId;
 use mongodb::bson::{doc, to_document, Document};
 use mongodb::options::{FindOneAndUpdateOptions, ReturnDocument};
+use mongodb::results::DeleteResult;
 use mongodb::{Collection, Database};
 use proc_macros::DbResource;
 use serde::de::DeserializeOwned;
 use serde::Serialize;
-use anyhow::Result;
-use mongodb::results::DeleteResult;
 
 fn create_query_id(id: &str) -> Document {
     let obj_id = ObjectId::parse_str(id).unwrap();
@@ -22,9 +22,7 @@ where
 {
     let collection = db.collection(T::COLLECTION);
     let document = to_document(&item).expect("shit happened");
-    let result = collection
-        .insert_one(document, None)
-        .await?;
+    let result = collection.insert_one(document, None).await?;
     let object_id = result.inserted_id.as_object_id().expect("error 1");
     let filter = doc! {"_id": object_id};
     let response = collection.find_one(filter, None).await?;
@@ -43,9 +41,7 @@ where
 {
     let filter = create_query_id(id);
     let collection: Collection<T> = db.collection(T::COLLECTION);
-    let result = collection
-        .delete_one(filter, None)
-        .await?;
+    let result = collection.delete_one(filter, None).await?;
     Ok(result)
 }
 pub async fn get_by_id<T>(db: &Database, id: &str) -> Result<Option<T>>
@@ -77,7 +73,6 @@ where
         .await?;
     Ok(result)
 }
-
 
 #[cfg(test)]
 mod tests {

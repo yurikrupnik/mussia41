@@ -1,5 +1,5 @@
 docker_build(
-  "yurikrupnik/web-actix",
+  "yurikrupnik/operators-orc",
   ".",
   dockerfile="./Dockerfile",
   build_args={"APP_NAME":"web_actix"},
