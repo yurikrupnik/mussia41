@@ -56,7 +56,7 @@ async fn main() -> std::io::Result<()> {
             .default_service(web::route().to(default))
     })
     .bind(get_web_url(false))?
-    .workers(1)
+    // .workers(1)
     .run()
     .await
 }

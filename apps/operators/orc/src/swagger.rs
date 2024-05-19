@@ -1,6 +1,5 @@
-use models::book::{Book, NewBook, UpdateBook};
 use super::api::{
-    book::{controller as book},
+    book::controller as book,
     project::model::{NewProject, Project, UpdateProject},
     services::{
         controller as service,
@@ -12,6 +11,7 @@ use super::api::{
     },
     users::model::{NewUser, UpdateUser, User},
 };
+use models::book::{Book, NewBook, UpdateBook};
 use services::errors::ntex::HttpError;
 use utoipa::OpenApi;
 

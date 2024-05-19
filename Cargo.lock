@@ -6091,7 +6091,6 @@ version = "4.0.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "0a32488b691c135d58eb78efcf8258ebb3db1ec7447964c6a83bd5e1ab7a39d9"
 dependencies = [
- "actix-web",
  "serde",
  "serde_json",
  "utoipa",
@@ -6103,7 +6102,6 @@ version = "4.0.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "ca44a24600ba6bead97e455954d2f01b062af9eff5facba4266fd3d62687ef0f"
 dependencies = [
- "actix-web",
  "serde",
  "serde_json",
  "utoipa",
@@ -6321,9 +6319,23 @@ version = "0.1.0"
 dependencies = [
  "actix-rt",
  "actix-web",
+ "bb8",
+ "bb8-redis",
+ "env_logger",
+ "futures",
  "general",
+ "generic_api",
+ "log",
+ "models",
+ "mongodb",
+ "proc_macros",
+ "redis",
  "serde",
  "serde_json",
+ "services",
+ "shared",
+ "utoipa",
+ "utoipa-swagger-ui",
 ]
 
 [[package]]
@@ -6344,7 +6356,6 @@ dependencies = [
  "env_logger",
  "general",
  "ntex",
- "openssl",
  "serde",
  "tokio",
 ]
