@@ -9,14 +9,14 @@ pub enum WebUrl {
     AddressString(String),
 }
 
-impl WebUrl {
-    fn into(&self) -> io::Result<String> {
-        match self {
-            WebUrl::Address(ip, port) => Ok("".to_string()),
-            WebUrl::AddressString(s) => Ok(s.to_string()),
-        }
-    }
-}
+// impl WebUrl {
+//     fn into(&self) -> io::Result<String> {
+//         match self {
+//             WebUrl::Address(ip, port) => Ok("".to_string()),
+//             WebUrl::AddressString(s) => Ok(s.to_string()),
+//         }
+//     }
+// }
 
 impl ToSocketAddrs for WebUrl {
     type Iter = std::vec::IntoIter<SocketAddr>;

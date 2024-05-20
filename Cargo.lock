@@ -2883,7 +2883,6 @@ dependencies = [
  "ntex-service",
  "ntex-tls",
  "ntex-util",
- "openssl",
  "percent-encoding",
  "pin-project-lite",
  "regex",
@@ -3062,7 +3061,6 @@ dependencies = [
  "ntex-net",
  "ntex-service",
  "ntex-util",
- "openssl",
 ]
 
 [[package]]
@@ -3308,7 +3306,6 @@ dependencies = [
  "env_logger",
  "futures",
  "general",
- "generic_api",
  "models",
  "mongodb",
  "ntex",
@@ -6332,7 +6329,6 @@ dependencies = [
  "env_logger",
  "futures",
  "general",
- "generic_api",
  "log",
  "models",
  "mongodb",
@@ -6351,10 +6347,25 @@ name = "web_axum"
 version = "0.1.0"
 dependencies = [
  "axum",
+ "bb8",
+ "bb8-redis",
+ "futures",
  "general",
- "jsonwebtoken",
+ "models",
+ "mongodb",
+ "proc_macros",
+ "redis",
+ "serde",
+ "serde_json",
+ "services",
+ "shared",
  "tokio",
  "tower",
+ "tower-http",
+ "tracing",
+ "tracing-subscriber",
+ "utoipa",
+ "utoipa-swagger-ui",
 ]
 
 [[package]]

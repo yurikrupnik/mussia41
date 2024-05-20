@@ -1,15 +1,15 @@
 use super::api::{
     book::controller as book,
-    project::model::{NewProject, Project, UpdateProject},
-    services::{
-        controller as service,
-        model::{NewService, Service, UpdateService},
-    },
+    // project::model::{NewProject, Project, UpdateProject},
+    // services::{
+    //     controller as service,
+    //     model::{NewService, Service, UpdateService},
+    // },
     todo::{
         controller as todo,
         model::{NewTodo, Todo, Update},
     },
-    users::model::{NewUser, UpdateUser, User},
+    // users::model::{NewUser, UpdateUser, User},
 };
 use models::book::{Book, NewBook, UpdateBook};
 use services::errors::ntex::HttpError;
@@ -25,12 +25,12 @@ use utoipa::OpenApi;
         todo::update_todo,
         todo::delete_todo,
         todo::drop_todos,
-        service::get_service,
-        service::get_services,
-        service::create_service,
-        service::update_service,
-        service::delete_service,
-        service::drop_services,
+        // service::get_service,
+        // service::get_services,
+        // service::create_service,
+        // service::update_service,
+        // service::delete_service,
+        // service::drop_services,
         book::get_book,
         book::get_books,
         book::create_book,
@@ -46,21 +46,21 @@ use utoipa::OpenApi;
     ),
     components(schemas(
         HttpError,
-        User,
-        UpdateUser,
-        NewUser,
+        // User,
+        // UpdateUser,
+        // NewUser,
         Todo,
         NewTodo,
         Update,
-        Service,
-        UpdateService,
-        NewService,
+        // Service,
+        // UpdateService,
+        // NewService,
         Book,
         UpdateBook,
         NewBook,
-        NewProject,
-        Project,
-        UpdateProject
+        // NewProject,
+        // Project,
+        // UpdateProject
     ))
 )]
 pub(crate) struct ApiDoc;

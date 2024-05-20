@@ -32,7 +32,7 @@ async fn main() -> std::io::Result<()> {
 
     let client = Client::with_uri_str(get_mongo_uri())
         .await
-        .expect("failed to connect");
+        .expect("failed to connect!");
     let db = client.database("aris");
 
     let manager = RedisConnectionManager::new(get_redis_uri()).unwrap();

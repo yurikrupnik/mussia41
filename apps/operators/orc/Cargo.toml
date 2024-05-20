@@ -9,7 +9,7 @@ anyhow = "1.0"
 proc_macros = {workspace = true}
 models = {path = "../../../libs/models"}
 general = {path = "../../../libs/general"}
-generic_api = {path = "../../../libs/generic_api"}
+#generic_api = {path = "../../../libs/generic_api"}
 services = {path = "../../../libs/services"}
 shared = {path = "../../../libs/shared"}
 ntex = { version = "1.2", features = ["tokio", "default"] }
@@ -18,7 +18,7 @@ futures = "0.3"
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 env_logger = "0.11"
-tokio = "1.37"
+tokio = { version = '1.37', features = ['macros', 'signal', 'rt-multi-thread'] }
 validator = "0.18"
 mongodb = { version = "2.8", features = ["default"] }
 redis = { version = "0.25", features = ["serde", "serde_json", "async-trait"] }
