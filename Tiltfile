@@ -2,7 +2,7 @@ docker_build(
   "yurikrupnik/operators-orc",
   ".",
   dockerfile="./Dockerfile",
-  build_args={"APP_NAME":"operators_orc"},
+  build_args={"APP_NAME":"web_actix"},
   target="final",
 )
 

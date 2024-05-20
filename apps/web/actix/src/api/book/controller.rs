@@ -96,7 +96,7 @@ pub async fn delete_book(app_state: Data<AppState>, id: Path<String>) -> HttpRes
     post,
     path = "/api/book",
     tag = Book::TAG,
-    request_body = Newbook,
+    request_body = NewBook,
     responses(
     (status = 201, description = "book created", body = book),
     ),
@@ -113,7 +113,7 @@ pub async fn create_book(body: Json<NewBook>, app_state: Data<AppState>) -> Http
             let doc: Book = from_document(payload).expect("error 5");
             HttpResponse::Created().json(&doc)
         }
-        Ok(None) => HttpResponse::NotFound().json(&format!("No user found with id")),
+        Ok(None) => HttpResponse::NotFound().json("No user found - just created!"),
         Err(err) => HttpResponse::InternalServerError().json(&err.to_string()),
     }
 }

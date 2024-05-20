@@ -44,6 +44,7 @@ where
     let result = collection.delete_one(filter, None).await?;
     Ok(result)
 }
+
 pub async fn get_by_id<T>(db: &Database, id: &str) -> Result<Option<T>>
 where
     T: DbResource + DeserializeOwned + Serialize + Sync + Send + Unpin,

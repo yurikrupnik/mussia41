@@ -29,5 +29,5 @@ utoipa-swagger-ui = { version = "7.0", features = [] }
 utoipa-redoc = { version = "4.0", features = [] }
 utoipa-rapidoc = { version = "4.0", features = [] }
 ts-rs = { version = '8.1', features = ['serde-compat'] }
-http = "1.1.0"
+#http = "1.1.0"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html

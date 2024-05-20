@@ -5,7 +5,11 @@ RUN cargo install cargo-chef
 WORKDIR app
 
 FROM chef AS planner
-COPY . .
+COPY ./Cargo.toml .
+COPY ./Cargo.lock .
+COPY ./nx.json .
+COPY ./apps ./apps
+COPY ./libs ./libs
 RUN cargo chef prepare --recipe-path recipe.json
 
 FROM messense/rust-musl-cross:x86_64-musl AS builder
