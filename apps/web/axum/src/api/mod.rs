@@ -1,19 +1,15 @@
+use axum::Router;
+use shared::app_state::AppState;
 
 pub mod todo;
-// pub mod book;
-// mod book;
+pub mod book;
 
-use axum::Router;
-use axum::routing::post;
+use todo::router::router as todo_router;
+use book::router::router as book_router;
 
-pub fn routes() -> Router<()>  {
-    let todo_routes = Router::new().route("/todo", post(|| async {}));
-    let todso_routes = Router::new().route("/todoa", post(|| async {}));
-    let s = Router::new().nest("/api", todo_routes).merge(todso_routes);
-    s
-    // cfg.service(
-    //     scope("/api")
-    //         .configure(todo_configure)
-    //         .configure(book_configure)
-    // );
+pub fn routes() -> Router<AppState>  {
+    Router::new()
+        .nest("/api", todo_router())
+        .nest("/api", book_router())
+        // .merge(todo_router())
 }

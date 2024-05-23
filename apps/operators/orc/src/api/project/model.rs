@@ -1,4 +1,4 @@
-use crate::api::users::model::User;
+// use crate::api::users::model::User;
 use mongodb::bson::oid::ObjectId;
 use proc_macros::DbResource;
 use serde::{Deserialize, Serialize};
@@ -10,11 +10,11 @@ use services::mongo::{
 use utoipa::{IntoParams, ToSchema};
 use validator::Validate;
 
-#[derive(Clone, ToSchema, Debug, PartialEq, Eq, Deserialize, Serialize)]
-enum UserOrId {
-    Id(ObjectId),
-    User(User),
-}
+// #[derive(Clone, ToSchema, Debug, PartialEq, Eq, Deserialize, Serialize)]
+// enum UserOrId {
+//     Id(ObjectId),
+//     User(User),
+// }
 
 #[derive(Clone, ToSchema, Debug, PartialEq, Eq, Deserialize, Serialize, Validate, DbResource)]
 #[serde(rename_all = "camelCase")]

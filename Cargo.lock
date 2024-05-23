@@ -1274,6 +1274,38 @@ dependencies = [
 ]
 
 [[package]]
+name = "deadpool"
+version = "0.12.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "6541a3916932fe57768d4be0b1ffb5ec7cbf74ca8c903fdfd5c0fe8aa958f0ed"
+dependencies = [
+ "deadpool-runtime",
+ "num_cpus",
+ "serde",
+ "tokio",
+]
+
+[[package]]
+name = "deadpool-redis"
+version = "0.15.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "7ff315fab2a7a42132352909afc81140d06b8bbfd1414b098ce278e3f95dd1b9"
+dependencies = [
+ "deadpool",
+ "redis",
+ "serde",
+]
+
+[[package]]
+name = "deadpool-runtime"
+version = "0.1.4"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "092966b41edc516079bdf31ec78a2e0588d1d0c08f78b91d8307215928642b2b"
+dependencies = [
+ "tokio",
+]
+
+[[package]]
 name = "der"
 version = "0.7.9"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2633,11 +2665,11 @@ version = "0.1.0"
 dependencies = [
  "bb8",
  "bb8-redis",
+ "deadpool-redis",
  "futures",
  "futures-util",
  "general",
  "mongodb",
- "ntex",
  "redis",
  "serde",
  "serde_derive",
@@ -3813,12 +3845,17 @@ dependencies = [
  "itoa",
  "percent-encoding",
  "pin-project-lite",
+ "rustls 0.22.4",
+ "rustls-native-certs",
+ "rustls-pemfile 2.1.2",
+ "rustls-pki-types",
  "ryu",
  "serde",
  "serde_json",
  "sha1_smol",
  "socket2 0.5.6",
  "tokio",
+ "tokio-rustls 0.25.0",
  "tokio-util",
  "url",
 ]
@@ -4908,6 +4945,7 @@ dependencies = [
  "bb8",
  "bb8-redis",
  "futures",
+ "general",
  "mongodb",
  "ntex",
  "proc_macros",
@@ -6096,6 +6134,7 @@ version = "4.0.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "0a32488b691c135d58eb78efcf8258ebb3db1ec7447964c6a83bd5e1ab7a39d9"
 dependencies = [
+ "axum",
  "serde",
  "serde_json",
  "utoipa",
@@ -6107,6 +6146,19 @@ version = "4.0.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "ca44a24600ba6bead97e455954d2f01b062af9eff5facba4266fd3d62687ef0f"
 dependencies = [
+ "axum",
+ "serde",
+ "serde_json",
+ "utoipa",
+]
+
+[[package]]
+name = "utoipa-scalar"
+version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "b3ab4b7269d14d93626b0bfedf212f1b0995cb7d13d35daba21d579511e7fae8"
+dependencies = [
+ "axum",
  "serde",
  "serde_json",
  "utoipa",
@@ -6119,6 +6171,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "6c49396bb19184d3ac1220bb56b3ec91e3d6275baa6cbd5a0f36f110a88d6afb"
 dependencies = [
  "actix-web",
+ "axum",
  "mime_guess",
  "regex",
  "reqwest",
@@ -6349,8 +6402,10 @@ dependencies = [
  "axum",
  "bb8",
  "bb8-redis",
+ "env_logger",
  "futures",
  "general",
+ "log",
  "models",
  "mongodb",
  "proc_macros",
@@ -6365,6 +6420,9 @@ dependencies = [
  "tracing",
  "tracing-subscriber",
  "utoipa",
+ "utoipa-rapidoc",
+ "utoipa-redoc",
+ "utoipa-scalar",
  "utoipa-swagger-ui",
 ]
 

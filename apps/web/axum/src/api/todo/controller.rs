@@ -3,18 +3,13 @@ use mongodb::Collection;
 use proc_macros::DbResource;
 use services::mongo::filter_and_options::construct_find_options_and_filter;
 use shared::app_state::AppState;
-// use actix_web::{web::{Query, Data, Json, Path}, HttpResponse};
 use axum::{
-    // body::Body,
-    extract::{Extension, Json, Path, State, Query},
+    extract::{Json, Path, State, Query},
     http::StatusCode,
     response::IntoResponse,
-    // routing::{delete, get, post, put},
-    // Router,
 };
 use futures::TryStreamExt;
 use mongodb::bson::from_document;
-// use serde_json::json;
 use services::mongo::service::{
     create_item, delete_by_id, drop_collection, get_by_id, update_by_id,
 };
@@ -33,8 +28,6 @@ use services::mongo::service::{
 pub async fn get_todo(State(app_state): State<AppState>, id: Path<String>) -> impl IntoResponse {
     let item_id = id.0;
     let db = &app_state.db;
-    // let query = query.into_inner();
-    // let (filter, options) = construct_find_options_and_filter(query.clone()).unwrap();
 
     let result = get_by_id::<Todo>(db, &item_id).await;
     match result {

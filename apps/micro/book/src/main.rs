@@ -1,94 +1,72 @@
-use futures_util::future::join_all;
-use ntex::rt;
+extern crate redis;
+// use redis::Commands;
+use redis::{Client, PubSubCommands};
+use general::get_redis_uri;
+use redis::{Connection, RedisResult, aio::AsyncStream};
+use futures::prelude::*;
 // use redis::AsyncCommands;
-use bb8::Pool;
-use general::{get_mongo_uri, get_redis_uri};
-use mongodb::bson::oid::ObjectId;
-use serde::{Deserialize, Serialize};
-use tokio::select;
-
-#[derive(Debug, Serialize, Deserialize)]
-struct Person {
-    #[serde(rename = "_id", skip_serializing_if = "Option::is_none")]
-    id: Option<ObjectId>,
-    name: String,
-    age: i32,
-}
-
-#[derive(Debug, Serialize, Deserialize)]
-struct OtherData {
-    info: String,
-}
-
-use bb8_redis::{
-    bb8,
-    redis::{cmd, AsyncCommands},
-    RedisConnectionManager,
-};
-use futures_util::StreamExt;
-use redis::Msg;
-
-async fn maadsin() {
-    let manager = RedisConnectionManager::new("redis://localhost").unwrap();
-    let pool = bb8::Pool::builder().build(manager).await.unwrap();
-
-    let mut handles = vec![];
-
-    for _i in 0..10 {
-        let pool = pool.clone();
-
-        handles.push(tokio::spawn(async move {
-            let mut conn = pool.get().await.unwrap();
-
-            let reply: String = cmd("PING").query_async(&mut *conn).await.unwrap();
-
-            assert_eq!("PONG", reply);
-        }));
-    }
-
-    join_all(handles).await;
+// use redis::Commands;
+// use redis::aio::ConnectionLike;
+// use tokio::net::TcpListener;
+// use tokio::task;
+// use tokio::io::{AsyncReadExt, AsyncWriteExt};
+fn do_something(con: &mut Connection) -> RedisResult<()> {
+    let _ : () = redis::cmd("SET").arg("my_key").arg(42).query(con)?;
+    // let _ : () = con.set("my_key", 42)?;
+    // This will result in a server error: "unknown command `MEMORY USAGE`"
+    // because "USAGE" is technically a sub-command of "MEMORY".
+    // redis::cmd("MEMORY USAGE").arg("my_key").query(con)?;
+    // let s = con.subscribe("dsa").unwrap();
+    // However, this will work as you'd expect
+    // redis::cmd("MEMORY").arg("USAGE").arg("my_key").query(con).expect("TODO: panic message");
+    Ok(())
 }
 #[tokio::main]
-async fn main() -> std::io::Result<()> {
-    // let manager = RedisConnectionManager::new(get_redis_uri()).unwrap();
-    // let redis_pool = Pool::builder().build(manager).await.unwrap();
-    let client = redis::Client::open(get_redis_uri()).unwrap();
-    let mut con = client.get_connection().unwrap();
-
+async fn main() -> Result<(), Box<dyn std::error::Error>> {
+    let client = Client::open(get_redis_uri())?;
+    let mut con = client.get_connection()?;
     let mut pubsub = con.as_pubsub();
-    pubsub.subscribe("person_topic").unwrap();
-
+    pubsub.subscribe("channel_1")?;
+    // pubsub.subscribe("channel_2")?;
     loop {
-        let msg = pubsub.get_message().unwrap();
-        let payload: String = msg.get_payload().unwrap();
+        let msg = pubsub.get_message()?;
+        let payload : String = msg.get_payload()?;
         println!("channel '{}': {}", msg.get_channel_name(), payload);
     }
-    // let client = redis::Client::open("redis://127.0.0.1/").unwrap();
-    // let mut con = client.get_async_connection().await.unwrap();
-    // let mut pubsub = con.as_pubsub();
-    // pubsub.subscribe("person_topic").await.unwrap();
-    // pubsub.subscribe("other_topic").await.unwrap();
+    // let conn = client.create_multiplexed_tokio_connection().await.unwrap();
+    // let con = client.get_multiplexed_tokio_connection().await?.clone();
+    // let s = do_something(conn);
+    // client.get_async_pubsub().await.unwrap().subscribe("csad").await?;
+    // con.se
+    // con.
+    // con.sse
+    Ok(())
+    //     let listener = TcpListener::bind("0.0.0.0:8081").await?;
     //
     // loop {
-    //     select! {
-    //         msg = pubsub.on_message() => {
-    //             let channel: String = msg.get_channel_name().to_string();
-    //             let payload: String = msg.get_payload().unwrap();
+    //     let (mut socket, _) = listener.accept().await?;
     //
-    //             match channel.as_str() {
-    //                 "person_topic" => {
-    //                     let person: Person = serde_json::from_str(&payload).unwrap();
-    //                     println!("Received on person_topic: {:?}", person);
-    //                 },
-    //                 "other_topic" => {
-    //                     let other_data: OtherData = serde_json::from_str(&payload).unwrap();
-    //                     println!("Received on other_topic: {:?}", other_data);
-    //                 },
-    //                 _ => {
-    //                     println!("Received on unknown topic: {}", channel);
+    //     tokio::spawn(async move {
+    //         let mut buf = [0; 1024];
+    //
+    //         // In a loop, read data from the socket and write the data back.
+    //         loop {
+    //             let n = match socket.read(&mut buf).await {
+    //                 // socket closed
+    //                 Ok(n) if n == 0 => return,
+    //                 Ok(n) => n,
+    //                 Err(e) => {
+    //                     eprintln!("failed to read from socket; err = {:?}", e);
+    //                     return;
     //                 }
+    //             };
+    //
+    //             // Write the data back
+    //             if let Err(e) = socket.write_all(&buf[0..n]).await {
+    //                 eprintln!("failed to write to socket; err = {:?}", e);
+    //                 return;
     //             }
     //         }
-    //     }
+    //     });
     // }
 }

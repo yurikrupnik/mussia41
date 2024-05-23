@@ -4,6 +4,7 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
+general = {path = "../general"}
 shared = {path = "../shared"}
 proc_macros = {workspace = true}
 #proc_macros = {path = "../proc_macros"}

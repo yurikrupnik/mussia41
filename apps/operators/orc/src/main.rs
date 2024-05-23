@@ -1,18 +1,34 @@
 mod api;
 mod swagger;
 
+// use std::sync::Arc;
 use api::routes;
-use bb8::Pool;
-use bb8_redis::bb8;
-use bb8_redis::RedisConnectionManager;
 use general::socket_addrs::get_web_url;
-use general::{get_mongo_uri, get_redis_uri};
-use mongodb::Client;
-use ntex::web::{self, HttpResponse};
-use services::swagger::ntex::ntex_config;
+use ntex::web::{self, get, HttpResponse};
+use redis::AsyncCommands;
 use shared::app_state::AppState;
 use swagger::ApiDoc;
-// use services::redis::{publish::publish_message, subscribe::subscribe_to_channel};
+use services::{
+    swagger::ntex::ntex_config,
+    mongo::connector::connect as mongo_connect,
+    redis::connector::connect as redis_connect
+};
+use bb8::{Pool,PooledConnection};
+use bb8_redis::RedisConnectionManager;
+use redis::aio::ConnectionLike;
+use serde::{Serialize, Deserialize};
+use services::redis::{publish::publish_message, subscribe::subscribe_to_channel};
+
+// async fn listen_to_topic(pool: Pool<RedisConnectionManager>) {
+//     let mut conn = pool.get().await.expect("Failed to get Redis connection from pool");
+//     let mut pubsub = conn.as_pubsub();
+//     pubsub.subscribe("your-topic-name").await.expect("Failed to subscribe to topic");
+//
+//     loop {
+//         let msg: String = pubsub.on_message().next().await.unwrap().get_payload().unwrap();
+//         println!("Received message: {}", msg);
+//     }
+// }
 
 async fn default() -> HttpResponse {
     HttpResponse::NotFound().finish()
@@ -22,17 +38,22 @@ async fn main() -> std::io::Result<()> {
     std::env::set_var("RUST_LOG", "ntex=info");
     env_logger::init();
 
-    let client = Client::with_uri_str(get_mongo_uri())
-        .await
-        .expect("failed to connect");
-    let db = client.database("aris");
-
-    let manager = RedisConnectionManager::new(get_redis_uri()).unwrap();
-    let redis_pool = Pool::builder().build(manager).await.unwrap();
-
+    // let db = mongo_connect("aris").await;
+    let db = mongo_connect("aris").await;
+    let redis_pool = redis_connect().await;
+    let ds = redis_pool.clone();
+    let conn = ds.get().await.unwrap();
+    // conn.get_db().d
+    // conn.se
+    // let mut conn = &redis_pool.get().await.expect("Failed to get Redis connection from pool");
+    // let mut pubsub = conn.publish("ds", None).await;
     // let sub_channel_name = "my_channel".to_string();
+    // let sub_channel_name1 = "dam".to_string();
     // tokio::spawn(async move {
     //     subscribe_to_channel(&sub_channel_name).await.unwrap();
+    //     subscribe_to_channel(&sub_channel_name1).await.unwrap();
+    // });
+    // tokio::spawn(async move {
     // });
     // // Small delay to ensure the subscriber is ready (not ideal in production)
     // tokio::time::sleep(tokio::time::Duration::from_secs(1)).await;
@@ -56,14 +77,14 @@ async fn main() -> std::io::Result<()> {
             .default_service(web::route().to(default))
     })
     .bind(get_web_url(false))?
-    // .workers(1)
+    .workers(1)
     .run()
     .await
 }
 
 #[cfg(test)]
 mod tests {
-    use super::api::todo::controller::get_todo;
+    // use super::api::todo::controller::get_todo;
     use ntex::web::test;
 
     // #[ntex::test]

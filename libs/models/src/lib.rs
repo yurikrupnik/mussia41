@@ -1,5 +1,6 @@
 pub mod book;
 pub mod todo;
+pub mod shit;
 
 #[cfg(test)]
 mod tests {
