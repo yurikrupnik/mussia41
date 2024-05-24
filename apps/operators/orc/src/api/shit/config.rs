@@ -3,7 +3,7 @@ use ntex::web;
 
 pub fn shit_routes(cfg: &mut web::ServiceConfig) {
     cfg.service(
-        web::scope("/shit").service((
+        web::scope("/shita").service((
             web::resource("")
                 .route(web::delete().to(drop_shits))
                 .route(web::get().to(get_shits))

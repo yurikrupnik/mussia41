@@ -18,6 +18,19 @@ use bb8_redis::RedisConnectionManager;
 use redis::aio::ConnectionLike;
 use serde::{Serialize, Deserialize};
 use services::redis::{publish::publish_message, subscribe::subscribe_to_channel};
+use kube::{Client, api::{Api, ListParams}};
+async fn list_pods(client: Client) {
+    let pods: Api<k8s_openapi::api::core::v1::Pod> = Api::default_namespaced(client);
+    let lp = ListParams::default().limit(10);
+    match pods.list(&lp).await {
+        Ok(pod_list) => {
+            for p in pod_list {
+                println!("Found Pod: {}", p.metadata.name.unwrap());
+            }
+        }
+        Err(e) => println!("Error listing pods: {:?}", e),
+    }
+}
 
 // async fn listen_to_topic(pool: Pool<RedisConnectionManager>) {
 //     let mut conn = pool.get().await.expect("Failed to get Redis connection from pool");
@@ -43,6 +56,9 @@ async fn main() -> std::io::Result<()> {
     let redis_pool = redis_connect().await;
     let ds = redis_pool.clone();
     let conn = ds.get().await.unwrap();
+
+    let client = Client::try_default().await.expect("Failed to create client");
+    list_pods(client.clone()).await;
     // conn.get_db().d
     // conn.se
     // let mut conn = &redis_pool.get().await.expect("Failed to get Redis connection from pool");

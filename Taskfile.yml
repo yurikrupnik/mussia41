@@ -10,3 +10,8 @@ tasks:
     cmds:
       - echo "{{.GREETING}}"
     silent: true
+  install-deps:
+    cmds:
+      - kind create cluster
+      - sleep 15
+      - timoni bundle apply -f manifests/podinfo.bundle.cue

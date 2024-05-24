@@ -16,6 +16,8 @@ members = [
 	'libs/proc_macros',
 	'libs/generic_api',
 	'apps/micro/book',
+	'apps/ci/ci_example',
+	'libs/k8s',
 ]
 
 [workspace.dependencies]

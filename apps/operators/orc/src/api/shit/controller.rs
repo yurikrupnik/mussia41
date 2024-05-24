@@ -1,5 +1,5 @@
 use super::model::{Shit, NewShit, UpdateShit, ShitListQuery, ShitItemQuery};
-use futures::TryStreamExt;
+use futures::{StreamExt, TryStreamExt};
 use mongodb::bson::{doc, from_document};
 use mongodb::Collection;
 use ntex::web::types::{Json, Path, Query, State};
@@ -15,7 +15,8 @@ use shared::app_state::AppState;
 use shared::validation::validate_request_body;
 use redis::{self, PubSub, aio::{PubSub as AioPubsub}, PubSubCommands, cmd};
 use bb8_redis::{RedisConnectionManager};
-
+// use futures::prelude::*;
+// use redis::{AsyncCommands};
 
 #[derive(Serialize, Deserialize)]
 pub struct RequestData {
@@ -33,19 +34,22 @@ pub async fn handle_request(
     let new_shit = body.into_inner();
     let pool = app_state.redis.clone();
     let new_shit_str = serde_json::to_string(&new_shit).unwrap();
-    // tokio::spawn(async move {
-    //     let mut conn = pool.get().await.unwrap();
-    //
-    //     let reply: String = cmd("PING").query_async(&mut *conn).await.unwrap();
-    //
-    //     assert_eq!("PONG", reply);
-    // });
-    let result = pool.get().await.and_then(|mut con| {
-        // let s =  con.publish("create_book", new_shit_str);
-        // con.p
-        //
-        Ok(())
+    tokio::spawn(async move {
+        let mut conn = pool.get().await.unwrap();
+        println!("hello!!!!");
+        // let count : i32 = conn.get("my_counter")?;
+        // redis::cmd("set").arg("aor").arg(23).query_async(&mut *conn).await.unwrap();
+        let reply: String = cmd("PING").query_async(&mut *conn).await.unwrap();
+        // let rep  = cmd("SET").arg("my_shit").arg(42).query_async(&mut *conn).await.unwrap();
+        // let rep  = cmd("SET").arg("my_key").arg(42).query(&mut *conn).await.unwrap();
+        assert_eq!("PONG", reply);
     });
+    // let result = pool.get().await.and_then(|mut con| {
+    //     // let s =  con.publish("create_book", new_shit_str);
+    //     // con.p
+    //     //
+    //     Ok(())
+    // });
     //
     // match result {
     //     Ok(_) => HttpResponse::build(StatusCode::CREATED).finish(),

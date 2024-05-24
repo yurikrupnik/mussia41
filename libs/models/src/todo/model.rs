@@ -9,7 +9,7 @@ use utoipa::{IntoParams, ToSchema};
 use validator::Validate;
 
 /// Todo struct
-#[derive(Default, Clone, ToSchema, Debug, PartialEq, Eq, Deserialize, Serialize, DbResource, TS)]
+#[derive(Default, Clone, ToSchema, PartialEq, Debug, Eq, Deserialize, Serialize, DbResource, TS)]
 #[schema(example = json!({"id": "6646396301dcad222bba63b3", "text": "Buy food", "completed": false}))]
 pub struct Todo {
     /// Todo db id
