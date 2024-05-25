@@ -93,7 +93,7 @@ jobs:
       - uses: nrwl/nx-set-shas@v4
       - name: Install dependencies
         run: pnpm install --no-frozen-lockfile
-      - run: pnpm nx affected --target=lint --parallel --max-parallel=3
+      - run: pnpm nx affected --target=lint --parallel --max-parallel=12
   build:
     runs-on: ubuntu-latest
     steps:
