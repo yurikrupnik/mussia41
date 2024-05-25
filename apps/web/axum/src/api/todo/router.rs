@@ -4,7 +4,7 @@ use axum::{routing, Router};
 use proc_macros::DbResource;
 use shared::app_state::AppState;
 
-/// Todo endpoint router - includes full CRUD
+/// Todo endpoint router - includes full CRUD!
 pub fn router() -> Router<AppState> {
     Router::new()
         .route(
