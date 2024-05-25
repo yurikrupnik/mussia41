@@ -4,9 +4,9 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-general = {path = "../general"}
-shared = {path = "../shared"}
-proc_macros = {workspace = true}
+general = { path = "../general" }
+shared = { path = "../shared" }
+proc_macros = { workspace = true }
 #proc_macros = {path = "../proc_macros"}
 futures = "0.3"
 async-trait = "0.1"
@@ -21,4 +21,6 @@ bb8-redis = { version = "0.15" }
 redis = { version = "0.25", features = ["serde", "serde_json", "async-trait"] }
 bb8 = { version = "0.8", features = ["default"] }
 anyhow = "1.0.83"
+kube = { version = "0.91", features = ["runtime", "derive"] }
+k8s-openapi = { version = "0.22", features = ["latest"] }
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html

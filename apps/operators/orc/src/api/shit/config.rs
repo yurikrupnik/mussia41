@@ -1,4 +1,6 @@
-use super::controller::{handle_request, create_shit, delete_shit, drop_shits, get_shit, get_shits, update_shit};
+use super::controller::{
+    create_shit, delete_shit, drop_shits, get_shit, get_shits, handle_request, update_shit,
+};
 use ntex::web;
 
 pub fn shit_routes(cfg: &mut web::ServiceConfig) {

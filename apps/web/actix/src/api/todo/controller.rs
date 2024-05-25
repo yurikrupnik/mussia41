@@ -1,12 +1,17 @@
-use mongodb::Collection;
-use models::todo::{NewTodo, Todo, TodoListQuery, Update};
-use services::mongo::filter_and_options::construct_find_options_and_filter;
-use shared::app_state::AppState;
-use proc_macros::DbResource;
-use actix_web::{web::{Query, Data, Json, Path}, HttpResponse};
+use actix_web::{
+    web::{Data, Json, Path, Query},
+    HttpResponse,
+};
 use futures::TryStreamExt;
+use models::todo::{NewTodo, Todo, TodoListQuery, Update};
 use mongodb::bson::from_document;
-use services::mongo::service::{create_item, delete_by_id, drop_collection, get_by_id, update_by_id};
+use mongodb::Collection;
+use proc_macros::DbResource;
+use services::mongo::filter_and_options::construct_find_options_and_filter;
+use services::mongo::service::{
+    create_item, delete_by_id, drop_collection, get_by_id, update_by_id,
+};
+use shared::app_state::AppState;
 // use shared::validation::validate_request_body;
 
 /// Get a todo by id

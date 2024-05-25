@@ -1,14 +1,14 @@
-use futures::TryStreamExt;
 use super::model::{Book, BookListQuery, NewBook, UpdateBook};
+use futures::TryStreamExt;
 // use super::model::{s}
-use mongodb::bson::{doc, from_document};
-use mongodb::Collection;
 use axum::{
-    extract::{Json, Path, State, Query},
+    extract::{Json, Path, Query, State},
     http::StatusCode,
     response::IntoResponse,
 };
 use models::todo::Todo;
+use mongodb::bson::{doc, from_document};
+use mongodb::Collection;
 use proc_macros::DbResource;
 use services::mongo::filter_and_options::construct_find_options_and_filter;
 use services::mongo::service::{
@@ -35,8 +35,12 @@ pub async fn get_book(State(app_state): State<AppState>, id: Path<String>) -> im
     let result = get_by_id::<Book>(db, &item_id).await;
     match result {
         Ok(Some(payload)) => (StatusCode::OK, Json(&payload)).into_response(),
-        Ok(None) => (StatusCode::NOT_FOUND, Json(&"Newly created item is not found")).into_response(),
-        Err(err) => (StatusCode::INTERNAL_SERVER_ERROR, Json(&err.to_string())).into_response()
+        Ok(None) => (
+            StatusCode::NOT_FOUND,
+            Json(&"Newly created item is not found"),
+        )
+            .into_response(),
+        Err(err) => (StatusCode::INTERNAL_SERVER_ERROR, Json(&err.to_string())).into_response(),
     }
 }
 
@@ -50,7 +54,10 @@ pub async fn get_book(State(app_state): State<AppState>, id: Path<String>) -> im
         (status = 200, description = "List of books", body = [Book]),
     ),
 )]
-pub async fn get_books(State(app_state): State<AppState>, query: Query<BookListQuery>) -> impl IntoResponse {
+pub async fn get_books(
+    State(app_state): State<AppState>,
+    query: Query<BookListQuery>,
+) -> impl IntoResponse {
     let query = query.0;
     let (filter, options) = construct_find_options_and_filter(query.clone()).unwrap();
     let db = &app_state.db;
@@ -80,7 +87,10 @@ pub async fn get_books(State(app_state): State<AppState>, query: Query<BookListQ
     (status = 201, description = "Todo created", body = Todo),
     ),
 )]
-pub async fn create_book(body: Json<NewBook>, State(app_state): State<AppState>) -> impl IntoResponse {
+pub async fn create_book(
+    body: Json<NewBook>,
+    State(app_state): State<AppState>,
+) -> impl IntoResponse {
     let db = &app_state.db;
     let body = body.0;
     // if let Err(response) = validate_request_body(&body) {
@@ -116,12 +126,18 @@ pub async fn delete_book(State(app_state): State<AppState>, id: Path<String>) ->
             if delete_result.deleted_count == 1 {
                 (StatusCode::OK, Json(&"successfully deleted!")).into_response()
             } else {
-                (StatusCode::NOT_FOUND, Json(&format!("item with specified ID {item_id} not found!"))).into_response()
+                (
+                    StatusCode::NOT_FOUND,
+                    Json(&format!("item with specified ID {item_id} not found!")),
+                )
+                    .into_response()
             }
         }
-        Err(_) => {
-            (StatusCode::NOT_FOUND, Json(&format!("item with specified ID {item_id} not found!"))).into_response()
-        }
+        Err(_) => (
+            StatusCode::NOT_FOUND,
+            Json(&format!("item with specified ID {item_id} not found!")),
+        )
+            .into_response(),
     }
 }
 
@@ -170,6 +186,10 @@ pub async fn update_book(
             let doc: Todo = from_document(payload).unwrap();
             (StatusCode::OK, Json(&doc)).into_response()
         }
-        None => (StatusCode::NOT_FOUND, Json(&format!("not found item with ID {item_id}"))).into_response(),
+        None => (
+            StatusCode::NOT_FOUND,
+            Json(&format!("not found item with ID {item_id}")),
+        )
+            .into_response(),
     }
 }

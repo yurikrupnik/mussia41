@@ -1,8 +1,8 @@
 // use redis::{aio::ConnectionLike, AsyncCommands, RedisResult};
 // use futures::StreamExt;
 // streams::StreamExt
-use redis::{Client, RedisResult};
 use general::get_redis_uri;
+use redis::{Client, RedisResult};
 
 pub async fn subscribe_to_channel(channel: &str) -> RedisResult<()> {
     let client = Client::open(get_redis_uri()).unwrap();

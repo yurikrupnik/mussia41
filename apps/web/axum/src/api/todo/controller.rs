@@ -1,18 +1,18 @@
-use models::todo::{NewTodo, Todo, TodoListQuery, Update};
-use mongodb::Collection;
-use proc_macros::DbResource;
-use services::mongo::filter_and_options::construct_find_options_and_filter;
-use shared::app_state::AppState;
 use axum::{
-    extract::{Json, Path, State, Query},
+    extract::{Json, Path, Query, State},
     http::StatusCode,
     response::IntoResponse,
 };
 use futures::TryStreamExt;
+use models::todo::{NewTodo, Todo, TodoListQuery, Update};
 use mongodb::bson::from_document;
+use mongodb::Collection;
+use proc_macros::DbResource;
+use services::mongo::filter_and_options::construct_find_options_and_filter;
 use services::mongo::service::{
     create_item, delete_by_id, drop_collection, get_by_id, update_by_id,
 };
+use shared::app_state::AppState;
 // use shared::validation::validate_request_body;
 
 /// Get a todo by id
@@ -32,8 +32,12 @@ pub async fn get_todo(State(app_state): State<AppState>, id: Path<String>) -> im
     let result = get_by_id::<Todo>(db, &item_id).await;
     match result {
         Ok(Some(payload)) => (StatusCode::OK, Json(&payload)).into_response(),
-        Ok(None) => (StatusCode::NOT_FOUND, Json(&"Newly created item is not found")).into_response(),
-        Err(err) => (StatusCode::INTERNAL_SERVER_ERROR, Json(&err.to_string())).into_response()
+        Ok(None) => (
+            StatusCode::NOT_FOUND,
+            Json(&"Newly created item is not found"),
+        )
+            .into_response(),
+        Err(err) => (StatusCode::INTERNAL_SERVER_ERROR, Json(&err.to_string())).into_response(),
     }
 }
 
@@ -47,7 +51,10 @@ pub async fn get_todo(State(app_state): State<AppState>, id: Path<String>) -> im
     (status = 200, description = "List of Todo", body = [Todo]),
     ),
 )]
-pub async fn get_todos(State(app_state): State<AppState>, query: Query<TodoListQuery>) -> impl IntoResponse {
+pub async fn get_todos(
+    State(app_state): State<AppState>,
+    query: Query<TodoListQuery>,
+) -> impl IntoResponse {
     let query = query.0;
     let (filter, options) = construct_find_options_and_filter(query.clone()).unwrap();
     let db = &app_state.db;
@@ -87,14 +94,20 @@ pub async fn delete_todo(State(app_state): State<AppState>, id: Path<String>) ->
                 (StatusCode::OK, Json(&"successfully deleted!")).into_response()
                 // HttpResponse::Ok().json(&"successfully deleted!")
             } else {
-                (StatusCode::NOT_FOUND, Json(&format!("item with specified ID {item_id} not found!"))).into_response()
+                (
+                    StatusCode::NOT_FOUND,
+                    Json(&format!("item with specified ID {item_id} not found!")),
+                )
+                    .into_response()
                 // HttpResponse::NotFound()
                 //     .json(&format!("item with specified ID {item_id} not found!"))
             }
         }
-        Err(_) => {
-            (StatusCode::NOT_FOUND, Json(&format!("item with specified ID {item_id} not found!"))).into_response()
-        }
+        Err(_) => (
+            StatusCode::NOT_FOUND,
+            Json(&format!("item with specified ID {item_id} not found!")),
+        )
+            .into_response(),
     }
 }
 
@@ -108,7 +121,10 @@ pub async fn delete_todo(State(app_state): State<AppState>, id: Path<String>) ->
     (status = 201, description = "Todo created", body = Todo),
     ),
 )]
-pub async fn create_todo(State(app_state): State<AppState>, body: Json<NewTodo>) -> impl IntoResponse {
+pub async fn create_todo(
+    State(app_state): State<AppState>,
+    body: Json<NewTodo>,
+) -> impl IntoResponse {
     let db = &app_state.db;
     let body = body.0;
     // if let Err(response) = validate_request_body(&body) {
@@ -172,6 +188,10 @@ pub async fn update_todo(
             let doc: Todo = from_document(payload).unwrap();
             (StatusCode::OK, Json(&doc)).into_response()
         }
-        None => (StatusCode::NOT_FOUND, Json(&format!("not found item with ID {item_id}"))).into_response(),
+        None => (
+            StatusCode::NOT_FOUND,
+            Json(&format!("not found item with ID {item_id}")),
+        )
+            .into_response(),
     }
 }

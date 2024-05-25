@@ -1,5 +1,5 @@
-use futures::TryStreamExt;
 use super::model::{Book, BookListQuery, NewBook, UpdateBook};
+use futures::TryStreamExt;
 use mongodb::bson::{doc, from_document};
 use mongodb::Collection;
 use ntex::web::types::{Json, Path, Query, State};

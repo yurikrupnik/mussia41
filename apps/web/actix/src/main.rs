@@ -1,21 +1,17 @@
 mod api;
 mod swagger;
 
-use std::net::Ipv4Addr;
-use actix_web::{
-    middleware::Logger,
-    get, web, App, HttpResponse, HttpServer, Responder
-};
+use actix_web::{get, middleware::Logger, web, App, HttpResponse, HttpServer, Responder};
+use api::routes;
 use general::get_port;
+use services::{
+    mongo::connector::connect as mongo_connect, redis::connector::connect as redis_connect,
+};
+use shared::app_state::AppState;
+use std::net::Ipv4Addr;
+use swagger::ApiDoc;
 use utoipa::OpenApi;
 use utoipa_swagger_ui::SwaggerUi;
-use shared::app_state::AppState;
-use api::routes;
-use services::{
-    mongo::connector::connect as mongo_connect,
-    redis::connector::connect as redis_connect
-};
-use swagger::ApiDoc;
 #[get("/")]
 async fn hello() -> HttpResponse {
     HttpResponse::Ok().body("Hello world!?!!")
@@ -39,7 +35,7 @@ async fn main() -> std::io::Result<()> {
     let redis_pool = redis_connect().await;
     let state = AppState::new(db, redis_pool);
     log::info!("Starting HTTP server on http://localhost:{}!", get_port());
-    
+
     HttpServer::new(move || {
         App::new()
             .app_data(web::Data::new(state.clone()))

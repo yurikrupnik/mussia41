@@ -1,20 +1,20 @@
-use super::model::{Shit, NewShit, UpdateShit, ShitListQuery, ShitItemQuery};
+use super::model::{NewShit, Shit, ShitItemQuery, ShitListQuery, UpdateShit};
 use futures::{StreamExt, TryStreamExt};
 use mongodb::bson::{doc, from_document};
 use mongodb::Collection;
 use ntex::web::types::{Json, Path, Query, State};
 use ntex::web::HttpResponse;
-use serde::{Deserialize, Serialize};
 use proc_macros::DbResource;
+use serde::{Deserialize, Serialize};
 use services::mongo::filter_and_options::construct_find_options_and_filter;
 use services::mongo::service::{
     create_item, delete_by_id, drop_collection, get_by_id, update_by_id,
 };
 // use tokio::
+use bb8_redis::RedisConnectionManager;
+use redis::{self, aio::PubSub as AioPubsub, cmd, PubSub, PubSubCommands};
 use shared::app_state::AppState;
 use shared::validation::validate_request_body;
-use redis::{self, PubSub, aio::{PubSub as AioPubsub}, PubSubCommands, cmd};
-use bb8_redis::{RedisConnectionManager};
 // use futures::prelude::*;
 // use redis::{AsyncCommands};
 
@@ -27,10 +27,7 @@ pub struct RequestData {
 //     let s =  con.publish("create_book", new_shit_str).await;
 //     s
 // }
-pub async fn handle_request(
-    body: Json<NewShit>,
-    app_state: State<AppState>
-) -> HttpResponse {
+pub async fn handle_request(body: Json<NewShit>, app_state: State<AppState>) -> HttpResponse {
     let new_shit = body.into_inner();
     let pool = app_state.redis.clone();
     let new_shit_str = serde_json::to_string(&new_shit).unwrap();
@@ -67,8 +64,8 @@ pub async fn handle_request(
     // let mut con = redis_pool.get().await.expect("Failed to connect to Redis");
     // con.se
     // let _: () = con.set("latest_request", &payload.data).expect("Failed to set value in Redis");
-// con.se
-//     let mut conn = redis_pool.get_owned().await.expect("Failed to get Redis connection from pool");
+    // con.se
+    //     let mut conn = redis_pool.get_owned().await.expect("Failed to get Redis connection from pool");
     // let mut conn = redis_pool.get().await.expect("Failed to get Redis connection from pool");
     // conn
     // let _ : () = conn.set("my_key", RequestData{message: "dsa".to_string()}).await.expect("dsa");

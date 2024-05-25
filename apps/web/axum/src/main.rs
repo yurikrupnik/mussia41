@@ -1,20 +1,19 @@
 mod api;
 mod swagger;
-use swagger::ApiDoc;
-use utoipa::OpenApi;
+use api::routes;
 use axum::Router;
 use general::socket_addrs::get_web_url_v1;
+use services::{
+    mongo::connector::connect as mongo_connect, redis::connector::connect as redis_connect,
+};
 use shared::app_state::AppState;
-use api::routes;
+use swagger::ApiDoc;
 use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
+use utoipa::OpenApi;
 use utoipa_rapidoc::RapiDoc;
 use utoipa_redoc::{Redoc, Servable};
 use utoipa_scalar::{Scalar, Servable as ScalarServable};
 use utoipa_swagger_ui::SwaggerUi;
-use services::{
-    mongo::connector::connect as mongo_connect,
-    redis::connector::connect as redis_connect
-};
 
 #[tokio::main]
 async fn main() {

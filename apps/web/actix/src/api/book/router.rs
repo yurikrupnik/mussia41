@@ -1,7 +1,7 @@
+use super::controller::{create_book, delete_book, drop_books, get_book, get_books, update_book};
+use super::model::Book;
 use actix_web::web::{delete, get, post, put, resource, scope, ServiceConfig};
 use proc_macros::DbResource;
-use super::model::Book;
-use super::controller::{get_books, update_book, delete_book, drop_books, get_book, create_book};
 
 pub fn book_configure(cfg: &mut ServiceConfig) {
     cfg.service(

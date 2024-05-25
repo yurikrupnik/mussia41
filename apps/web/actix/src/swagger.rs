@@ -26,14 +26,6 @@ use utoipa::OpenApi;
         book::delete_book,
         book::drop_books,
     ),
-    components(schemas(
-        HttpError,
-        Todo,
-        NewTodo,
-        Update,
-        Book,
-        UpdateBook,
-        NewBook,
-    ))
+    components(schemas(HttpError, Todo, NewTodo, Update, Book, UpdateBook, NewBook,))
 )]
 pub(crate) struct ApiDoc;

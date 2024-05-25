@@ -5,7 +5,9 @@ edition = "2021"
 
 
 [dependencies]
-proc_macros= {workspace = true}
+proc_macros = { workspace = true }
+general = { path = "../../../libs/general" }
+services = { path = "../../../libs/services" }
 kube = { version = "0.91", features = ["runtime", "derive"] }
 k8s-openapi = { version = "0.22", features = ["latest"] }
 ntex = { version = "1.2", features = ["tokio", "default"] }
@@ -20,4 +22,27 @@ utoipa-swagger-ui = { version = "7.0", features = [] }
 utoipa-redoc = { version = "4.0", features = [] }
 utoipa-rapidoc = { version = "4.0", features = [] }
 ts-rs = { version = '8.1', features = ['serde-compat'] }
+prometheus = "0.13.3"
+chrono = { version = "0.4", features = ["serde"] }
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["json", "env-filter"] }
+tracing-opentelemetry = "0.23"
+opentelemetry = { version = "0.23", features = ["trace"] }
+futures = "0.3"
+schemars = "0.8"
+#opentelemetry = { version = "0.23", features = ["trace", "rt-tokio"] }
+#opentelemetry-otlp = { version = "0.16", features = ["tokio"], optional = true }
+tonic = { version = "0.11", optional = true }
+thiserror = "1.0"
+anyhow = "1.0"
+
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+[dev-dependencies]
+assert-json-diff = "2.0"
+http = "1"
+hyper = "1"
+tower-test = "0.4"
+
+#[dependencies.kube]
+#features = ["runtime", "client", "derive" ]
+#version = "0.91.0"

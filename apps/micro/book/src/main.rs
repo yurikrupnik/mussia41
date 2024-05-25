@@ -1,9 +1,9 @@
 extern crate redis;
 // use redis::Commands;
-use redis::{Client, PubSubCommands};
-use general::get_redis_uri;
-use redis::{Connection, RedisResult, aio::AsyncStream};
 use futures::prelude::*;
+use general::get_redis_uri;
+use redis::{aio::AsyncStream, Connection, RedisResult};
+use redis::{Client, PubSubCommands};
 // use redis::AsyncCommands;
 // use redis::Commands;
 // use redis::aio::ConnectionLike;
@@ -11,7 +11,7 @@ use futures::prelude::*;
 // use tokio::task;
 // use tokio::io::{AsyncReadExt, AsyncWriteExt};
 fn do_something(con: &mut Connection) -> RedisResult<()> {
-    let _ : () = redis::cmd("SET").arg("my_key").arg(42).query(con)?;
+    let _: () = redis::cmd("SET").arg("my_key").arg(42).query(con)?;
     // let _ : () = con.set("my_key", 42)?;
     // This will result in a server error: "unknown command `MEMORY USAGE`"
     // because "USAGE" is technically a sub-command of "MEMORY".
@@ -30,7 +30,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     // pubsub.subscribe("channel_2")?;
     loop {
         let msg = pubsub.get_message()?;
-        let payload : String = msg.get_payload()?;
+        let payload: String = msg.get_payload()?;
         println!("channel '{}': {}", msg.get_channel_name(), payload);
     }
     // let conn = client.create_multiplexed_tokio_connection().await.unwrap();

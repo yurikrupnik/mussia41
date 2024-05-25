@@ -1,7 +1,7 @@
 use super::api::{
     book::{
         controller as book,
-        model::{Book, UpdateBook, NewBook}
+        model::{Book, NewBook, UpdateBook},
     },
     // project::model::{NewProject, Project, UpdateProject},
     // services::{

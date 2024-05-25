@@ -3,22 +3,24 @@ mod swagger;
 
 // use std::sync::Arc;
 use api::routes;
+use bb8::{Pool, PooledConnection};
+use bb8_redis::RedisConnectionManager;
 use general::socket_addrs::get_web_url;
+use kube::{
+    api::{Api, ListParams},
+    Client,
+};
 use ntex::web::{self, get, HttpResponse};
+use redis::aio::ConnectionLike;
 use redis::AsyncCommands;
+use serde::{Deserialize, Serialize};
+use services::redis::{publish::publish_message, subscribe::subscribe_to_channel};
+use services::{
+    mongo::connector::connect as mongo_connect, redis::connector::connect as redis_connect,
+    swagger::ntex::ntex_config,
+};
 use shared::app_state::AppState;
 use swagger::ApiDoc;
-use services::{
-    swagger::ntex::ntex_config,
-    mongo::connector::connect as mongo_connect,
-    redis::connector::connect as redis_connect
-};
-use bb8::{Pool,PooledConnection};
-use bb8_redis::RedisConnectionManager;
-use redis::aio::ConnectionLike;
-use serde::{Serialize, Deserialize};
-use services::redis::{publish::publish_message, subscribe::subscribe_to_channel};
-use kube::{Client, api::{Api, ListParams}};
 async fn list_pods(client: Client) {
     let pods: Api<k8s_openapi::api::core::v1::Pod> = Api::default_namespaced(client);
     let lp = ListParams::default().limit(10);
@@ -57,7 +59,9 @@ async fn main() -> std::io::Result<()> {
     let ds = redis_pool.clone();
     let conn = ds.get().await.unwrap();
 
-    let client = Client::try_default().await.expect("Failed to create client");
+    let client = Client::try_default()
+        .await
+        .expect("Failed to create client");
     list_pods(client.clone()).await;
     // conn.get_db().d
     // conn.se

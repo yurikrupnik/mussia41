@@ -1,9 +1,9 @@
 // use super::handlers::*;
 // use super::model::Todo;
+use super::controller::{create_todo, delete_todo, drop_todos, get_todo, get_todos, update_todo};
+use super::model::Todo;
 use actix_web::web::{delete, get, post, put, resource, scope, ServiceConfig};
 use proc_macros::DbResource;
-use super::model::Todo;
-use super::controller::{get_todos, update_todo, delete_todo, drop_todos, get_todo, create_todo};
 
 pub fn todo_configure(cfg: &mut ServiceConfig) {
     cfg.service(
