@@ -6,13 +6,13 @@ edition = "2021"
 
 [dependencies]
 anyhow = "1.0"
-proc_macros = {workspace = true}
-models = {path = "../../../libs/models"}
-general = {path = "../../../libs/general"}
+proc_macros = { workspace = true }
+models = { path = "../../../libs/models" }
+general = { path = "../../../libs/general" }
 #generic_api = {path = "../../../libs/generic_api"}
-services = {path = "../../../libs/services"}
-shared = {path = "../../../libs/shared"}
-ntex = { version = "1.2", features = ["tokio", "default"] }
+services = { path = "../../../libs/services" }
+shared = { path = "../../../libs/shared" }
+ntex = { version = "2.0", features = ["tokio", "default"] }
 chrono = { version = "0.4", features = ["serde"] }
 futures = "0.3"
 serde = { version = "1.0", features = ["derive"] }

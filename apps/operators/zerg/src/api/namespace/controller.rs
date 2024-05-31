@@ -1,30 +1,13 @@
 use super::model::{Namespace, NewNamespace, UpdateNamespace};
 use crate::AppState;
-use futures::future::Either;
-use k8s_openapi::api::core::v1::{Container, Namespace as K8sNamespace, Pod, PodSpec};
+use k8s_openapi::api::core::v1::{Namespace as K8sNamespace, Pod};
 use k8s_openapi::apimachinery::pkg::apis::meta::v1::ObjectMeta;
-use kube::client::Status;
-use kube::{
-    api::{
-        Api, ApiResource, DeleteParams, DynamicObject, ListParams, Patch, PatchParams, PostParams,
-    },
-    Client,
-};
-// use ntex::util::Either;
+use kube::api::{Api, DeleteParams, ListParams, Patch, PatchParams, PostParams};
 use ntex::web::{
-    self,
     types::{Json, Path, State},
-    App, HttpRequest, HttpResponse, HttpServer,
+    HttpResponse,
 };
 use serde_json::json;
-// use ntex::web::types::{Json, State};
-// use serde::{Serialize, Deserialize};
-// use serde::{Serialize, Deserialize};
-// // use kube::runtime::Reflector;
-// // use ntex::http::body::Body;
-// use ntex::web::types::{Json, Path};
-
-// let namespace_names: Vec<String> = namespace_list.iter().map(|ns| ns.metadata.name.clone().unwrap_or_default()).collect();
 
 /// Get a `Namespace` by id
 #[utoipa::path(
@@ -32,7 +15,7 @@ use serde_json::json;
     path = "/api/namespace",
     tag = "Namespaces",
     responses(
-    // (status = 200, description = "Service found", body = Service),
+    // (status = 200, description = "Service found", body = Vec<K8sNamespace>),
     (status = 404, description = "Service not found", body = HttpError),
     ),
 )]
@@ -45,7 +28,7 @@ pub async fn list_namespaces(app_state: State<AppState>) -> HttpResponse {
             // let namespace_names: Vec<String> = namespace_list.iter()
             //     .filter_map(|ns| ns.metadata.name.clone())
             //     .collect();
-            HttpResponse::Ok().json(&namespace_list)
+            HttpResponse::Ok().json(&namespace_list.items)
         }
         Err(e) => {
             HttpResponse::InternalServerError().body(format!("Error listing namespaces: {:?}", e))

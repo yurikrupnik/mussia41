@@ -1,4 +1,4 @@
-use k8s_openapi::api::core::v1::{Container, Namespace, Pod, PodSpec};
+use k8s_openapi::api::core::v1::{Container, Namespace, Pod, PodSpec, Probe};
 use kube::{
     api::{Api, ListParams, PostParams},
     Client,
@@ -21,6 +21,7 @@ use swagger::ApiDoc;
 // mod crdgen;
 // mod fixtures;
 
+use crate::api::namespace::controller::__path_create_namespace;
 use api::routes;
 
 #[derive(Deserialize)]
@@ -58,7 +59,9 @@ async fn create_pod(client: Client, namespace: String, pod_spec: PodSpecInput) -
             containers: vec![Container {
                 name: pod_spec.name.clone(),
                 image: Some(pod_spec.image.clone()),
-                ..Default::default()
+                ..Default::default() // liveness_probe: Probe {
+                                     //     http_get: {}, // exec:
+                                     // }, // liveness_probe: {}..Default::default(),
             }],
             ..Default::default()
         }),

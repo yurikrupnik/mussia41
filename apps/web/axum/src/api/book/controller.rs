@@ -82,9 +82,9 @@ pub async fn get_books(
     post,
     path = "/api/book",
     tag = Book::TAG,
-    request_body = NewBook,
+    // request_body = NewBook,
     responses(
-    (status = 201, description = "Todo created", body = Todo),
+    (status = 201, description = "Todo created", body = Book),
     ),
 )]
 pub async fn create_book(

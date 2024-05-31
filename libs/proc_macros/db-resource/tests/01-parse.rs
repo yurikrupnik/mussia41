@@ -1,5 +1,5 @@
-use rust_proc_macros::DbResource;
-use rust_proc_macros::Reflective;
+use proc_macros::DbResource;
+use proc_macros::Reflective;
 
 #[derive(DbResource, Reflective)]
 pub struct Command;
@@ -14,8 +14,8 @@ fn command_test() {
     let collection = Command::COLLECTION;
     let url = Command::URL;
     let tag = Command::TAG;
-    let shit = Command::SHIT;
-    assert_eq!("shit", shit);
+    // let shit = Command::SHIT;
+    // assert_eq!("shit", shit);
     assert_eq!("commands", collection);
     assert_eq!("/command", url);
     assert_eq!("Commands", tag);
