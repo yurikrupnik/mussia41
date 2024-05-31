@@ -11,4 +11,6 @@ pub trait DbResource {
     const URL: &'static str;
     const COLLECTION: &'static str;
     const TAG: &'static str;
+    const SHIT: &'static str;
+    // fn shit(s: &str) -> String;
 }

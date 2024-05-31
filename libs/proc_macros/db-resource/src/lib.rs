@@ -46,8 +46,12 @@ fn impl_db_resource_macro(ast: DeriveInput) -> TokenStream {
     // generate implementation
     let gen = quote! {
         impl DbResource for #ident {
-            // const SHIT: &'static str = #url;
+            const SHIT: &'static str = #url;
             // const SHIT1: &'static str = #name;
+            // pub fn shit(s: &str) -> String {
+            //   print!("dam");
+            //   String::from(s)
+            // }
             const URL: &'static str = #url;
             const COLLECTION: &'static str = #collection;
             const TAG: &'static str = #tag;

@@ -5,12 +5,12 @@ edition = "2021"
 
 
 [dependencies]
-proc_macros = {workspace = true}
-services = {path = "../../../libs/services"}
-shared = {path = "../../../libs/shared"}
-general = {path = "../../../libs/general"}
-models = {path = "../../../libs/models"}
-axum = {version = "0.7", features = ["default"]}
+proc_macros = { workspace = true }
+services = { path = "../../../libs/services" }
+shared = { path = "../../../libs/shared" }
+general = { path = "../../../libs/general" }
+models = { path = "../../../libs/models" }
+axum = { version = "0.7", features = ["default"] }
 tokio = { version = '1.37', features = ['macros', 'signal', 'rt-multi-thread'] }
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
@@ -30,5 +30,6 @@ utoipa-swagger-ui = { version = "7.0", features = ["axum"] }
 utoipa-redoc = { version = "4.0", features = ["axum"] }
 utoipa-rapidoc = { version = "4.0", features = ["axum"] }
 utoipa-scalar = { version = "0.1", features = ["axum"] }
+validator = { version = "0.18", features = ["derive"] }
 #jsonwebtoken = {version = "9.3"}
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html

@@ -13,7 +13,8 @@ use services::mongo::service::{
     create_item, delete_by_id, drop_collection, get_by_id, update_by_id,
 };
 use shared::app_state::AppState;
-// use shared::validation::validate_request_body;
+use shared::validation::validate_request_body;
+use validator::{Validate, ValidationErrors};
 
 /// Get a todo by id
 #[utoipa::path(
@@ -127,9 +128,15 @@ pub async fn create_todo(
 ) -> impl IntoResponse {
     let db = &app_state.db;
     let body = body.0;
-    // if let Err(response) = validate_request_body(&body) {
-    //     return response; // Returns early if validation fails
-    // }
+    // let s = body.create();
+    if let Err(e) = body.validate() {
+        return (StatusCode::BAD_REQUEST, Json(&e)).into_response();
+    }
+    //     .map_err(|e| (StatusCode::BAD_REQUEST, Json(&e)).into_response())
+    //     .expect("TODO: panic message");
+    if let Err(errors) = validate_request_body(&body) {
+        return (StatusCode::BAD_REQUEST, Json(&errors)).into_response();
+    }
     let response = create_item::<Todo, NewTodo>(db, body).await;
     match response {
         Ok(Some(payload)) => {
@@ -173,11 +180,9 @@ pub async fn update_todo(
     body: Json<Update>,
 ) -> impl IntoResponse {
     let body = body.0;
-
-    //     .map_err(|e| HttpResponse::BadRequest().body(e.to_string())).unwrap();
-    // if let Err(response) = validate_request_body(&body) {
-    //     return response; // Returns early if validation fails
-    // }
+    if let Err(errors) = validate_request_body(&body) {
+        return (StatusCode::BAD_REQUEST, Json(&errors)).into_response();
+    }
     let item_id = id.0;
     let db = &app_state.db;
     let result = update_by_id::<Todo, Update>(db, body, &item_id)

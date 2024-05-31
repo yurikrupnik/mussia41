@@ -2892,6 +2892,7 @@ dependencies = [
 name = "models"
 version = "0.1.0"
 dependencies = [
+ "anyhow",
  "mongodb",
  "proc_macros",
  "serde",
@@ -5204,6 +5205,7 @@ dependencies = [
  "general",
  "k8s-openapi",
  "kube",
+ "lazy_static",
  "mongodb",
  "ntex",
  "proc_macros",
@@ -6780,6 +6782,7 @@ dependencies = [
  "utoipa-redoc",
  "utoipa-scalar",
  "utoipa-swagger-ui",
+ "validator",
 ]
 
 [[package]]

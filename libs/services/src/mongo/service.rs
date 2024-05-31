@@ -1,4 +1,6 @@
+use crate::mongo::filter_and_options::construct_find_options_and_filter;
 use anyhow::Result;
+use futures::TryStreamExt;
 use mongodb::bson::oid::ObjectId;
 use mongodb::bson::{doc, to_document, Document};
 use mongodb::options::{FindOneAndUpdateOptions, ReturnDocument};
@@ -8,7 +10,7 @@ use proc_macros::DbResource;
 use serde::de::DeserializeOwned;
 use serde::Serialize;
 
-fn create_query_id(id: &str) -> Document {
+pub fn create_query_id(id: &str) -> Document {
     let obj_id = ObjectId::parse_str(id).unwrap();
     doc! {"_id": obj_id}
 }
@@ -74,6 +76,28 @@ where
         .await?;
     Ok(result)
 }
+
+// pub async fn get_list<T, Q>(db: &Database, query: Q) -> Result<Vec<T>>
+// where
+//     T: DbResource + DeserializeOwned + Serialize,
+//     Q: DeserializeOwned + Serialize + Clone,
+// {
+//     let collection: Collection<T> = db.collection(T::COLLECTION);
+//     let (filter, options) = construct_find_options_and_filter(query.clone()).unwrap();
+//     let mut cursor = collection
+//         .find(filter, options)
+//         .await
+//         .expect("failed fetching");
+//     let mut payload: Vec<T> = Vec::new();
+//     while let Some(item) = cursor
+//         .try_next()
+//         .await
+//         .expect("Error mapping through cursor")
+//     {
+//         payload.push(item);
+//     }
+//     Ok(payload)
+// }
 
 #[cfg(test)]
 mod tests {

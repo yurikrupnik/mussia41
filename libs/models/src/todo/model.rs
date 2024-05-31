@@ -1,12 +1,17 @@
+use anyhow::Result;
 use mongodb::bson::oid::ObjectId;
-use proc_macros::DbResource;
+use mongodb::bson::{doc, to_document};
+use mongodb::results::DeleteResult;
+use mongodb::Collection;
+use proc_macros::{DbResource, Reflective};
 use serde::{Deserialize, Serialize};
 use serde_json::json;
 use services::mongo::query_param_processing::QueryParamProcessing;
 use services::mongo::serialize::serialize_option_object_id;
+use services::mongo::service::create_query_id;
 use ts_rs::TS;
 use utoipa::{IntoParams, ToSchema};
-use validator::Validate;
+use validator::{Validate, ValidationErrors};
 
 /// Todo struct
 #[derive(
@@ -41,6 +46,18 @@ pub struct NewTodo {
     #[serde(default)]
     completed: bool,
 }
+// impl NewTodo {
+//     pub async fn create<T: DbResource>(&self) -> Result<(), ValidationErrors> {
+//         let collection = db.collection(T::COLLECTION);
+//         let document = to_document(&self).expect("shit happened");
+//         let result = collection.insert_one(document, None).await?;
+//         let object_id = result.inserted_id.as_object_id().expect("error 1");
+//         let filter = doc! {"_id": object_id};
+//         let response = collection.find_one(filter, None).await?;
+//         Ok(response)
+//         // self.validate()
+//     }
+// }
 
 /// UpdateTodo is used to update a `Todo`
 #[derive(Debug, Deserialize, Serialize, Validate, Clone, ToSchema)]
