@@ -1,5 +1,5 @@
+use general::socket_addrs::get_web_url;
 use ntex::web::{self, HttpResponse, Responder};
-use std::net::Ipv4Addr;
 
 #[web::get("/")]
 async fn hello() -> impl Responder {
@@ -10,29 +10,29 @@ async fn hello() -> impl Responder {
 async fn main() -> std::io::Result<()> {
     std::env::set_var("RUST_LOG", "ntex=info");
     env_logger::init();
-    
+
     web::HttpServer::new(move || {
-        // let json_config = web::types::JsonConfig::default().limit(4096);
+        let json_config = web::types::JsonConfig::default().limit(4096);
         web::App::new()
             // .service(SwaggerUi::new("/swagger-ui").url("/api-docs/openapi.json", ApiDoc::openapi()))
             // .service(Redoc::with_url("/redoc", ApiDoc::openapi()))
             // .service(Redoc::with_url("/redoc", ApiDoc::openapi.clone()))
             .wrap(web::middleware::Logger::default())
-            // .state(json_config)
+            .state(json_config)
             // .state(redis_pool.clone())
             // .state(client.clone())
             // .state(state.clone())
             .service(hello)
-            // .configure(user_routes)
-            // .configure(project_routes)
-            // .configure(generic_project_routes::<Project, NewProject>)
-            // .configure(user_routes_mongo)
+        // .configure(user_routes)
+        // .configure(project_routes)
+        // .configure(generic_project_routes::<Project, NewProject>)
+        // .configure(user_routes_mongo)
         // .default_service()
     })
-        .bind((Ipv4Addr::UNSPECIFIED, 8080))?
-        .workers(1)
-        .run()
-        .await
+    .bind(get_web_url(false))?
+    .workers(1)
+    .run()
+    .await
 }
 
 #[cfg(test)]

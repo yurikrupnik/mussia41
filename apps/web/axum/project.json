@@ -54,6 +54,45 @@
           "release": true
         }
       }
+    },
+    "serve": {
+      "executor": "nx:run-commands",
+      "outputs": [],
+      "options": {
+        "command": "cargo watch -x run",
+        "cwd": "apps/web/axum"
+      }
+    },
+    "docker-gcp": {
+      "executor": "nx:run-commands",
+      "outputs": [],
+      "options": {
+        "command": "gcloud builds submit . --substitutions _APP_NAME=web_axum,_IMAGE=web-axum --async --config ci/cloudbuild-run-container.yaml"
+      }
+    },
+    "docker": {
+      "executor": "@nx-tools/nx-container:build",
+      "options": {
+        "push": true,
+        "file": "./Dockerfile",
+        "target": "final",
+        "build-args": [
+          "APP_NAME=web_axum"
+        ],
+        "metadata": {
+          "images": [
+            "yurikrupnik/web-axum"
+          ],
+          "tags": [
+            "type=schedule",
+            "type=ref,event=branch",
+            "type=ref,event=tag",
+            "type=ref,event=pr",
+            "type=semver,pattern={{version}}",
+            "type=sha"
+          ]
+        }
+      }
     }
   },
   "tags": []

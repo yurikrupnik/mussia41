@@ -1,22 +1,22 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: actix-app
+  name: operators-orc
   labels:
-    app: actix-app
+    app: operators-orc
 spec:
   replicas: 1
   template:
     metadata:
-      name: actix-app
+      name: operators-orc
       labels:
-        app: actix-app
+        app: operators-orc
     spec:
-      serviceAccountName: actix-app
+      serviceAccountName: operators-orc
       restartPolicy: Always
       containers:
-        - name: actix-app
-          image: yurikrupnik/actix-app:latest
+        - name: operators-orc
+          image: yurikrupnik/operators-orc:main
           imagePullPolicy: IfNotPresent
           resources:
             requests:
@@ -27,10 +27,13 @@ spec:
               cpu: "500m"
           env:
             - name: MONGO_URI
-              valueFrom:
-                secretKeyRef:
-                  key: mongo-uri
-                  name: mongo-uri
+              value: "mongodb://host.docker.internal"
+            - name: REDIS_URI
+              value: "redis://localhost:6379"
+#              valueFrom:
+#                secretKeyRef:
+#                  key: mongo-uri
+#                  name: mongo-uri
   selector:
     matchLabels:
-      app: actix-app
+      app: operators-orc

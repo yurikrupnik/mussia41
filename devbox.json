@@ -1,0 +1,37 @@
+{
+  "$schema": "https://raw.githubusercontent.com/jetify-com/devbox/0.10.7/.schema/devbox.schema.json",
+  "packages": [
+    "nodejs@20",
+    "gh",
+    "newman",
+    "kompose",
+    "dagger@latest"
+  ],
+  "env": {
+    "DEVBOX_COREPACK_ENABLED": "true"
+  },
+  "shell": {
+    "init_hook": [
+      "echo 'Welcome to devbox!' > /dev/null",
+      "pnpm i"
+    ],
+    "scripts": {
+      "kompose-convert": [
+        "ls",
+        "cd manifests",
+        "ls",
+        "kompose convert"
+      ],
+      "test": [
+        "echo \"Error: no test specified\" && exit 1"
+      ],
+      "build": [
+        "pnpm nx run-many -t build"
+      ],
+      "start": [
+        "kind create cluster",
+        "tilt up"
+      ]
+    }
+  }
+}

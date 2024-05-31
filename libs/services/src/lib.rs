@@ -1,3 +1,9 @@
+pub mod errors;
+mod kube;
+pub mod mongo;
+pub mod redis;
+pub mod swagger;
+
 #[cfg(test)]
 mod tests {
     #[test]

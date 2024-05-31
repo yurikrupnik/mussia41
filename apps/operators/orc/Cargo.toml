@@ -1,0 +1,35 @@
+[package]
+name = "operators_orc"
+version = "0.1.0"
+edition = "2021"
+
+
+[dependencies]
+anyhow = "1.0"
+proc_macros = { workspace = true }
+models = { path = "../../../libs/models" }
+general = { path = "../../../libs/general" }
+#generic_api = {path = "../../../libs/generic_api"}
+services = { path = "../../../libs/services" }
+shared = { path = "../../../libs/shared" }
+ntex = { version = "2.0", features = ["tokio", "default"] }
+chrono = { version = "0.4", features = ["serde"] }
+futures = "0.3"
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+env_logger = "0.11"
+tokio = { version = '1.37', features = ['macros', 'signal', 'rt-multi-thread'] }
+validator = "0.18"
+mongodb = { version = "2.8", features = ["default"] }
+redis = { version = "0.25", features = ["serde", "serde_json", "async-trait"] }
+bb8-redis = { version = "0.15" }
+bb8 = { version = "0.8", features = ["default"] }
+utoipa = { version = "4.2", features = [] }
+utoipa-swagger-ui = { version = "7.0", features = [] }
+utoipa-redoc = { version = "4.0", features = [] }
+utoipa-rapidoc = { version = "4.0", features = [] }
+ts-rs = { version = '8.1', features = ['serde-compat'] }
+kube = { version = "0.91", features = ["runtime", "derive"] }
+k8s-openapi = { version = "0.22", features = ["latest"] }
+#http = "1.1.0"
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html

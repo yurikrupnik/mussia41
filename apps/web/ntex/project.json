@@ -3,6 +3,7 @@
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "projectType": "application",
   "sourceRoot": "apps/web/ntex/src",
+  "tags": [],
   "targets": {
     "build": {
       "executor": "@monodon/rust:build",
@@ -54,7 +55,45 @@
           "release": true
         }
       }
+    },
+    "serve": {
+      "executor": "nx:run-commands",
+      "outputs": [],
+      "options": {
+        "command": "cargo watch -x run",
+        "cwd": "apps/web/ntex"
+      }
+    },
+    "docker-gcps": {
+      "executor": "nx:run-commands",
+      "outputs": [],
+      "options": {
+        "command": "gcloud builds submit . --substitutions _IMAGE=web-ntex,_APP_NAME=web_ntex --async --config ci/cloudbuild-run-container.yaml"
+      }
+    },
+    "dockers": {
+      "executor": "@nx-tools/nx-container:build",
+      "options": {
+        "push": true,
+        "file": "./Dockerfile",
+        "target": "final",
+        "build-args": [
+          "APP_NAME=web_ntex"
+        ],
+        "metadata": {
+          "images": [
+            "yurikrupnik/web-ntex"
+          ],
+          "tags": [
+            "type=schedule",
+            "type=ref,event=branch",
+            "type=ref,event=tag",
+            "type=ref,event=pr",
+            "type=semver,pattern={{version}}",
+            "type=sha"
+          ]
+        }
+      }
     }
-  },
-  "tags": []
+  }
 }

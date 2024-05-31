@@ -1,0 +1,14 @@
+.github
+ci
+dist
+kcl
+manifests
+cloudbuild.yaml
+flake.nix
+kcl.yaml
+main.k
+README.md
+Taskfile.yml
+Tiltfile
+workspace.yaml
+.cargo

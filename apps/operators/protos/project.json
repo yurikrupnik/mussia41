@@ -54,6 +54,45 @@
           "release": true
         }
       }
+    },
+    "serve": {
+      "executor": "nx:run-commands",
+      "outputs": [],
+      "options": {
+        "command": "cargo watch -x run",
+        "cwd": "apps/operators/protos"
+      }
+    },
+    "docker-gcp": {
+      "executor": "nx:run-commands",
+      "outputs": [],
+      "options": {
+        "command": "gcloud builds submit . --substitutions _APP_NAME=operators_protos,_IMAGE=operators-protos --async --config ci/cloudbuild-run-container.yaml"
+      }
+    },
+    "docker": {
+      "executor": "@nx-tools/nx-container:build",
+      "options": {
+        "push": true,
+        "file": "./Dockerfile",
+        "target": "final",
+        "build-args": [
+          "APP_NAME=operators_protos"
+        ],
+        "metadata": {
+          "images": [
+            "yurikrupnik/operators-protos"
+          ],
+          "tags": [
+            "type=schedule",
+            "type=ref,event=branch",
+            "type=ref,event=tag",
+            "type=ref,event=pr",
+            "type=semver,pattern={{version}}",
+            "type=sha"
+          ]
+        }
+      }
     }
   },
   "tags": []

@@ -9,13 +9,13 @@
     "@nx-go/nx-go": "^3.0.0"
   },
   "devDependencies": {
-    "@loft-orbital/terraform": "^0.1.7",
     "@nx-extend/playwright": "^7.0.0",
     "@nx-extend/pulumi": "^5.0.4",
-    "@nx-extend/terraform": "^5.2.1",
+    "@nx-tools/container-metadata": "^6.0.0",
+    "@nx-tools/nx-container": "^6.0.0",
     "@nx/workspace": "18.3.3",
-    "@nxlv/python": "^18.0.1",
     "@nxtensions/astro": "^18.2.1",
-    "nx": "18.3.3"
+    "nx": "18.3.3",
+    "prettier": "^3.2.5"
   }
 }
