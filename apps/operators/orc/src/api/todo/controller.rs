@@ -3,7 +3,7 @@ use futures::TryStreamExt;
 use mongodb::bson::{doc, from_document};
 use mongodb::Collection;
 use ntex::web::types::{Json, Path, Query, State};
-use ntex::web::HttpResponse;
+use ntex::web::{resource, HttpResponse};
 use proc_macros::DbResource;
 use services::mongo::filter_and_options::construct_find_options_and_filter;
 use services::mongo::service::{
@@ -79,7 +79,7 @@ pub async fn create_todo(body: Json<NewTodo>, app_state: State<AppState>) -> Htt
     let body = body.into_inner();
     let db = &app_state.db;
     if let Err(response) = validate_request_body(&body) {
-        return response; // Returns early if validation fails
+        return HttpResponse::BadRequest().json(&response);
     }
     let response = create_item::<Todo, NewTodo>(db, body).await;
     match response {
@@ -154,7 +154,7 @@ pub async fn update_todo(
 ) -> HttpResponse {
     let body = body.into_inner();
     if let Err(response) = validate_request_body(&body) {
-        return response; // Returns early if validation fails
+        return HttpResponse::BadRequest().json(&response);
     }
     let item_id = id.into_inner();
     let db = &app_state.db;

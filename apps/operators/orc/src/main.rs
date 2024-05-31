@@ -56,8 +56,8 @@ async fn main() -> std::io::Result<()> {
     // let db = mongo_connect("aris").await;
     let db = mongo_connect("aris").await;
     let redis_pool = redis_connect().await;
-    let ds = redis_pool.clone();
-    let conn = ds.get().await.unwrap();
+    // let ds = redis_pool.clone();
+    // let conn = ds.get().await.unwrap();
 
     let client = Client::try_default()
         .await

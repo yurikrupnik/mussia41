@@ -81,9 +81,9 @@ pub async fn get_services(
 pub async fn create_service(body: Json<NewService>, app_state: State<AppState>) -> HttpResponse {
     let body = body.into_inner();
     let db = &app_state.db;
-    if let Err(response) = validate_request_body(&body) {
-        return response; // Returns early if validation fails
-    }
+    // if let Err(response) = validate_request_body(&body) {
+    //   return HttpResponse::Bad().json(&response);
+    // }
     let response = create_item::<Service, NewService>(db, body).await;
     match response {
         Ok(Some(payload)) => {

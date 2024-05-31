@@ -79,7 +79,8 @@ pub async fn create_book(body: Json<NewBook>, app_state: State<AppState>) -> Htt
     let body = body.into_inner();
     let db = &app_state.db;
     if let Err(response) = validate_request_body(&body) {
-        return response; // Returns early if validation fails
+        // return response; // Returns early if validation fails
+        return HttpResponse::BadRequest().json(&response);
     }
     let response = create_item::<Book, NewBook>(db, body).await;
     match response {
@@ -154,7 +155,7 @@ pub async fn update_book(
 ) -> HttpResponse {
     let body = body.into_inner();
     if let Err(response) = validate_request_body(&body) {
-        return response; // Returns early if validation fails
+        return HttpResponse::BadRequest().json(&response);
     }
     let item_id = id.into_inner();
     let db = &app_state.db;

@@ -12,7 +12,7 @@ use services::mongo::service::{
     create_item, delete_by_id, drop_collection, get_by_id, update_by_id,
 };
 use shared::app_state::AppState;
-// use shared::validation::validate_request_body;
+use shared::validation::validate_request_body;
 
 /// Get a Book by id
 #[utoipa::path(
@@ -109,9 +109,9 @@ pub async fn delete_book(app_state: Data<AppState>, id: Path<String>) -> HttpRes
 pub async fn create_book(body: Json<NewBook>, app_state: Data<AppState>) -> HttpResponse {
     let body = body.into_inner();
     let db = &app_state.db;
-    // if let Err(response) = validate_request_body(&body) {
-    //     return response; // Returns early if validation fails
-    // }
+    if let Err(response) = validate_request_body(&body) {
+        return HttpResponse::BadRequest().json(&response);
+    }
     let response = create_item::<Book, NewBook>(db, body).await;
     match response {
         Ok(Some(payload)) => {
