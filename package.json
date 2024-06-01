@@ -13,9 +13,9 @@
     "@nx-extend/pulumi": "^5.0.4",
     "@nx-tools/container-metadata": "^6.0.0",
     "@nx-tools/nx-container": "^6.0.0",
-    "@nx/workspace": "18.3.3",
+    "@nx/workspace": "18.3.5",
     "@nxtensions/astro": "^18.2.1",
-    "nx": "18.3.3",
+    "nx": "18.3.5",
     "prettier": "^3.2.5"
   }
 }
