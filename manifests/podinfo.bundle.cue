@@ -20,6 +20,20 @@ bundle: {
 				  	securityProfile: "privileged"
 				}
 		  }
+		  "prometheus": {
+		  	module: url: "oci://ghcr.io/stefanprodan/modules/flux-helm-release"
+			  namespace: "prometheus"
+		 	  values: {
+		 	  	repository: url: "https://prometheus-community.github.io/helm-charts"
+					chart: {
+						name:    "prometheus"
+				 		version: "25.21.*"
+					}
+					helmValues: {
+						installCRDs: true
+					}
+				}
+		  }
 		  "cert-manager": {
 		  	module: url: "oci://ghcr.io/stefanprodan/modules/flux-helm-release"
 			  namespace: "cert-manager"

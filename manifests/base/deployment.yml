@@ -18,6 +18,8 @@ spec:
         - name: operators-orc
           image: yurikrupnik/operators-orc:main
           imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8080
           resources:
             requests:
               memory: "64Mi"
@@ -30,10 +32,10 @@ spec:
               value: "mongodb://host.docker.internal"
             - name: REDIS_URI
               value: "redis://localhost:6379"
-#              valueFrom:
-#                secretKeyRef:
-#                  key: mongo-uri
-#                  name: mongo-uri
+  #              valueFrom:
+  #                secretKeyRef:
+  #                  key: mongo-uri
+  #                  name: mongo-uri
   selector:
     matchLabels:
       app: operators-orc

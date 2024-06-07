@@ -1,4 +1,3 @@
-use ntex::web::HttpResponse;
 use validator::{Validate, ValidationErrors};
 
 /// Validates the request body and returns an `Err` with an appropriate `HttpResponse` if validation fails.

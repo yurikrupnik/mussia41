@@ -10,32 +10,6 @@ permissions:
   contents: read
 
 jobs:
-  cargo-build:
-    #    runs-on: self-hosted
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-      - run: rustup toolchain install stable --profile minimal
-      - uses: Swatinem/rust-cache@v2
-        with:
-          cache-directories: "dist/target"
-          cache-all-crates: true
-      - run: cargo build --release
-  cargo-test:
-    #    runs-on: self-hosted
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-      - run: rustup toolchain install stable --profile minimal
-      - uses: Swatinem/rust-cache@v2
-        with:
-          cache-directories: "dist/target"
-          cache-all-crates: true
-      - run: cargo test
   image:
     runs-on: ubuntu-latest
     steps:

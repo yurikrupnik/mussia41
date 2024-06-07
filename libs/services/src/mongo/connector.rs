@@ -8,6 +8,27 @@ pub async fn connect(database: &str) -> Database {
     client.database(database)
 }
 
+// struct RandomStruct {}
+// struct AnotherRandomStruct(RandomStruct);
+// struct YetAnotherRandomStruct {
+//   inner: AnotherRandomStruct,
+// }
+// 
+// #[repr(transparent)]
+// struct MongoConnector {
+//     client: Client,
+// }
+// 
+// impl MongoConnector {
+//   pub async fn connect() -> Self {
+//     let client = Client::with_uri_str(get_mongo_uri())
+//         .await
+//         .expect("failed to connect");
+//     Self { client }
+//   }
+// }
+// 
+
 #[cfg(test)]
 mod tests {
     // use crate::mongo::connector::connect;
