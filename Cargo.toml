@@ -21,7 +21,7 @@ members = [
 
 [workspace.dependencies]
 proc_macros = { path = 'libs/proc_macros' }
-sentry = "0.34.0"
+sentry = "0.34"
 
 [profile.release]
 opt-level = 'z'
