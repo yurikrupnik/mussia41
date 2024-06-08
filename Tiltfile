@@ -13,3 +13,5 @@ docker_build(
 k8s_yaml(kustomize('manifests/base'))
 
 # include('./apps/web/actix/Tiltfile')
+
+local_resource('cargo:test', cmd='cargo test', deps=['package.json'], labels=['pnpm'])

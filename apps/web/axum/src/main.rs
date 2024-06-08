@@ -2,7 +2,7 @@
 // https://github.com/tokio-rs/axum/blob/main/examples/prometheus-metrics/src/main.rs
 
 use axum::Router;
-use axum_prometheus::PrometheusMetricLayer;
+// use axum_prometheus::PrometheusMetricLayer;
 use tower_http::trace::TraceLayer;
 use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
 use utoipa::OpenApi;
@@ -38,8 +38,8 @@ async fn main() {
   // Set up logging
   set_logger();
 
-  let (prometheus_layer, metric_handle) = PrometheusMetricLayer::pair();
-  let metric_handler = || async move { metric_handle.render() };
+  // let (prometheus_layer, metric_handle) = PrometheusMetricLayer::pair();
+  // let metric_handler = || async move { metric_handle.render() };
 
   let db = mongo_connect("aris").await;
   let redis_pool = redis_connect().await;
@@ -51,15 +51,15 @@ async fn main() {
     .merge(RapiDoc::new("/api-docs/openapi.json").path("/rapidoc"))
     .merge(Scalar::with_url("/scalar", ApiDoc::openapi()))
     .merge(routes())
-    .route(
-      "/metrics",
-      axum::routing::get(metric_handler),
-    )
+    // .route(
+    //   "/metrics",
+    //   axum::routing::get(metric_handler),
+    // )
     // .route(
     //   "/health",
     // axum::routing::get(|_| async move { metric_handle.render() }),
     // )
-    .layer(prometheus_layer)
+    // .layer(prometheus_layer)
     .layer(TraceLayer::new_for_http())
     .with_state(state);
 
