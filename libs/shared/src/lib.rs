@@ -7,7 +7,7 @@ pub mod validation;
 ///
 /// ```
 /// let arg = 5;
-/// let answer = super::add_one(arg);
+/// let answer = shared::add_one(arg);
 ///
 /// assert_eq!(6, answer);
 /// ```

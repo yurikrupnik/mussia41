@@ -1,12 +1,14 @@
 [env]
 CARGO_MAKE_EXTEND_WORKSPACE_MAKEFILE = true
 
-[tasks.python]
-script_runner = "python3"
-script_extension = "py"
-script = '''
-print("Hello, World!")
-'''
+[tasks.watch-test]
+command = "cargo"
+args = ["watch", "-q", "-c", "-N", "-x", "test -- --nocapture"]
+#script_runner = "python3"
+#script_extension = "py"
+#script = '''
+#print("Hello, World!")
+#'''
 
 [tasks.perl]
 script_runner = "perl"
