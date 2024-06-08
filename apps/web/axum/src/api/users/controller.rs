@@ -1,12 +1,12 @@
 use axum::{
   extract::{Json, Path, Query, State},
   http::StatusCode,
-  // error_handling::HandleErrorLayer,
   response::IntoResponse,
 };
 use futures::TryStreamExt;
 use mongodb::bson::from_document;
 use mongodb::Collection;
+use validator::Validate;
 
 use models::todo::{NewTodo, Todo, TodoListQuery, Update};
 use proc_macros::DbResource;
@@ -17,20 +17,22 @@ use services::mongo::service::{
 use shared::app_state::AppState;
 use shared::validation::validate_request_body;
 
-/// Get a todo by id
+use super::model::User;
+
+/// Get a `User` by id
 #[utoipa::path(
   get,
-  path = "/api/todo/{id}",
-  tag = Todo::TAG,
+  path = "/api/user/{id}",
+  tag = User::TAG,
   responses(
-  (status = 200, description = "Todo found", body = Todo),
-  (status = 404, description = "Todo not found", body = HttpError),
+  (status = 200, description = "User found", body = User),
+  (status = 404, description = "User not found", body = HttpError),
   ),
 )]
-pub async fn get_todo(State(app_state): State<AppState>, Path(id): Path<String>) -> impl IntoResponse {
+pub async fn get_user(State(app_state): State<AppState>, Path(id): Path<String>) -> impl IntoResponse {
   let db = &app_state.db;
 
-  let result = get_by_id::<Todo>(db, &id).await;
+  let result = get_by_id::<User>(db, &id).await;
   match result {
     Ok(Some(payload)) => (StatusCode::OK, Json(&payload)).into_response(),
     Ok(None) => (
@@ -54,8 +56,9 @@ pub async fn get_todo(State(app_state): State<AppState>, Path(id): Path<String>)
 )]
 pub async fn get_todos(
   State(app_state): State<AppState>,
-  Query(query): Query<TodoListQuery>,
+  query: Query<TodoListQuery>,
 ) -> impl IntoResponse {
+  let query = query.0;
   let (filter, options) = construct_find_options_and_filter(query.clone()).unwrap();
   let db = &app_state.db;
   let collection: Collection<Todo> = db.collection(Todo::COLLECTION);
@@ -84,9 +87,10 @@ pub async fn get_todos(
   (status = 404, description = "Todo not found", body = HttpError),
   ),
 )]
-pub async fn delete_todo(State(app_state): State<AppState>, Path(id): Path<String>) -> impl IntoResponse {
+pub async fn delete_todo(State(app_state): State<AppState>, id: Path<String>) -> impl IntoResponse {
+  let item_id = id.0;
   let db = &app_state.db;
-  let result = delete_by_id::<Todo>(db, &id).await;
+  let result = delete_by_id::<Todo>(db, &item_id).await;
   match result {
     Ok(delete_result) => {
       if delete_result.deleted_count == 1 {
@@ -95,7 +99,7 @@ pub async fn delete_todo(State(app_state): State<AppState>, Path(id): Path<Strin
       } else {
         (
           StatusCode::NOT_FOUND,
-          Json(&format!("item with specified ID {id} not found!")),
+          Json(&format!("item with specified ID {item_id} not found!")),
         )
           .into_response()
         // HttpResponse::NotFound()
@@ -104,7 +108,7 @@ pub async fn delete_todo(State(app_state): State<AppState>, Path(id): Path<Strin
     }
     Err(_) => (
       StatusCode::NOT_FOUND,
-      Json(&format!("item with specified ID {id} not found!")),
+      Json(&format!("item with specified ID {item_id} not found!")),
     )
       .into_response(),
   }
@@ -122,15 +126,14 @@ pub async fn delete_todo(State(app_state): State<AppState>, Path(id): Path<Strin
 )]
 pub async fn create_todo(
   State(app_state): State<AppState>,
-  Json(body): Json<NewTodo>,
+  body: Json<NewTodo>,
 ) -> impl IntoResponse {
   let db = &app_state.db;
-  // let body = body.0;
+  let body = body.0;
   // let s = body.create();
-  // body.validate()?;
-  // if let Err(e) = body.validate() {
-  //   return (StatusCode::BAD_REQUEST, Json(&e)).into_response();
-  // }
+  if let Err(e) = body.validate() {
+    return (StatusCode::BAD_REQUEST, Json(&e)).into_response();
+  }
   //     .map_err(|e| (StatusCode::BAD_REQUEST, Json(&e)).into_response())
   //     .expect("TODO: panic message");
   if let Err(errors) = validate_request_body(&body) {
@@ -174,15 +177,17 @@ pub async fn drop_todos(State(app_state): State<AppState>) -> impl IntoResponse 
   ),
 )]
 pub async fn update_todo(
-  Path(id): Path<String>,
+  id: Path<String>,
   State(app_state): State<AppState>,
-  Json(body): Json<Update>,
+  body: Json<Update>,
 ) -> impl IntoResponse {
+  let body = body.0;
   if let Err(errors) = validate_request_body(&body) {
     return (StatusCode::BAD_REQUEST, Json(&errors)).into_response();
   }
+  let item_id = id.0;
   let db = &app_state.db;
-  let result = update_by_id::<Todo, Update>(db, body, &id)
+  let result = update_by_id::<Todo, Update>(db, body, &item_id)
     .await
     .unwrap();
   match result {
@@ -192,7 +197,7 @@ pub async fn update_todo(
     }
     None => (
       StatusCode::NOT_FOUND,
-      Json(&format!("not found item with ID {}", &id)),
+      Json(&format!("not found item with ID {item_id}")),
     )
       .into_response(),
   }

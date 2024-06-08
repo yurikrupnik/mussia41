@@ -15,3 +15,4 @@ tasks:
       - kind create cluster
       - sleep 15
       - timoni bundle apply -f manifests/podinfo.bundle.cue
+

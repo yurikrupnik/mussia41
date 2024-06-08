@@ -1,8 +1,10 @@
-use super::controller::{create_todo, delete_todo, drop_todos, get_todo, get_todos, update_todo};
-use super::model::Todo;
 use axum::{routing, Router};
+
 use proc_macros::DbResource;
 use shared::app_state::AppState;
+
+use super::controller::{create_todo, delete_todo, drop_todos, get_todo, get_todos, update_todo};
+use super::model::Todo;
 
 /// Todo endpoint router - includes full CRUD!
 pub fn router() -> Router<AppState> {

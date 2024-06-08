@@ -7,6 +7,7 @@ edition = "2021"
 [dependencies]
 proc_macros = { workspace = true }
 services = { path = "../../../libs/services" }
+webserver_axum = { path = "../../../libs/webserver/axum" }
 shared = { path = "../../../libs/shared" }
 general = { path = "../../../libs/general" }
 models = { path = "../../../libs/models" }
@@ -31,5 +32,16 @@ utoipa-redoc = { version = "4.0", features = ["axum"] }
 utoipa-rapidoc = { version = "4.0", features = ["axum"] }
 utoipa-scalar = { version = "0.1", features = ["axum"] }
 validator = { version = "0.18", features = ["derive"] }
+#prometheus = { version = "0.13", features = ["default"] }
+#metrics = { version = "0.23", features = [] }
+#metrics-exporter-prometheus = { version = "0.15", features = ["default"] }
+#axum-prometheus = { version = "0.6", features = ["default"] }
+serde_with = "3.8"
+derive_more = "0.99"
+time = "0.3.36"
+uuid = { version = "1.8.0", features = ["v4"] }
 #jsonwebtoken = {version = "9.3"}
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dev-dependencies]
+httpc-test = { version = "0.1", features = ["color-output"] }
