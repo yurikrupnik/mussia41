@@ -13,12 +13,12 @@ pub async fn connect(database: &str) -> Database {
 // struct YetAnotherRandomStruct {
 //   inner: AnotherRandomStruct,
 // }
-// 
+//
 // #[repr(transparent)]
 // struct MongoConnector {
 //     client: Client,
 // }
-// 
+//
 // impl MongoConnector {
 //   pub async fn connect() -> Self {
 //     let client = Client::with_uri_str(get_mongo_uri())
@@ -27,7 +27,7 @@ pub async fn connect(database: &str) -> Database {
 //     Self { client }
 //   }
 // }
-// 
+//
 
 #[cfg(test)]
 mod tests {

@@ -1,7 +1,7 @@
 docker_build(
   "yurikrupnik/operators-orc",
   ".",
-  dockerfile="./rust.Dockerfile",
+  dockerfile="./Dockerfile",
   build_args={"APP_NAME":"web_axum"},
   target="final",
 )

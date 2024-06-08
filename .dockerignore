@@ -11,4 +11,4 @@ README.md
 Taskfile.yml
 Tiltfile
 workspace.yaml
-#.cargo
+.cargo
