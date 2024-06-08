@@ -33,9 +33,9 @@ utoipa-rapidoc = { version = "4.0", features = ["axum"] }
 utoipa-scalar = { version = "0.1", features = ["axum"] }
 validator = { version = "0.18", features = ["derive"] }
 #prometheus = { version = "0.13", features = ["default"] }
-metrics = { version = "0.23", features = [] }
-metrics-exporter-prometheus = { version = "0.15", features = ["default"] }
-axum-prometheus = { version = "0.6", features = ["default"] }
+#metrics = { version = "0.23", features = [] }
+#metrics-exporter-prometheus = { version = "0.15", features = ["default"] }
+#axum-prometheus = { version = "0.6", features = ["default"] }
 serde_with = "3.8"
 derive_more = "0.99"
 time = "0.3.36"
