@@ -1,3 +1,5 @@
+mod rust10x;
+
 #[cfg(test)]
 mod tests {
     #[test]

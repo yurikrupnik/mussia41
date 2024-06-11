@@ -26,8 +26,11 @@ members = [
 ]
 
 [workspace.dependencies]
-proc_macros = { path = 'libs/proc_macros' }
-sentry = '0.34'
+proc_macros = { path = "libs/proc_macros" }
+sentry = "0.34"
+time = {version = "0.3", features = ["formatting", "parsing", "serde"]}
+serde_with = {version = "3", features = ["time_0_3"] }
+derive_more = {version = "1.0.0-beta.6", features = ["from", "display"] }
 
 [profile.release]
 opt-level = 'z'

@@ -2,7 +2,7 @@
 // https://github.com/tokio-rs/axum/blob/main/examples/prometheus-metrics/src/main.rs
 
 use axum::Router;
-// use axum_prometheus::PrometheusMetricLayer;
+// use c::PrometheusMetricLayer;
 use tower_http::trace::TraceLayer;
 use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
 use utoipa::OpenApi;

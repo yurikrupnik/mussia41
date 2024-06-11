@@ -1,3 +1,67 @@
+// region:    --- Modules
+
+mod config;
+mod error;
+mod log;
+mod web;
+mod error;
+mod config;
+
+pub use self::error::{Error, Result};
+use config::web_config;
+
+use crate::web::mw_auth::{mw_ctx_require, mw_ctx_resolver};
+use crate::web::mw_req_stamp::mw_req_stamp_resolver;
+use crate::web::mw_res_map::mw_reponse_map;
+use crate::web::{routes_login, routes_static};
+use axum::{middleware, Router};
+use lib_core::_dev_utils;
+use lib_core::model::ModelManager;
+use tokio::net::TcpListener;
+use tower_cookies::CookieManagerLayer;
+use tracing::info;
+use tracing_subscriber::EnvFilter;
+
+// endregion: --- Modules
+
+#[tokio::main]
+async fn main() -> Result<()> {
+  tracing_subscriber::fmt()
+    .without_time() // For early local development.
+    .with_target(false)
+    .with_env_filter(EnvFilter::from_default_env())
+    .init();
+
+  // -- FOR DEV ONLY
+  _dev_utils::init_dev().await;
+
+  let mm = ModelManager::new().await?;
+
+  // -- Define Routes
+  let routes_rpc = web::routes_rpc::routes(mm.clone())
+    .route_layer(middleware::from_fn(mw_ctx_require));
+
+  let routes_all = Router::new()
+    .merge(routes_login::routes(mm.clone()))
+    .nest("/api", routes_rpc)
+    .layer(middleware::map_response(mw_reponse_map))
+    .layer(middleware::from_fn_with_state(mm.clone(), mw_ctx_resolver))
+    .layer(CookieManagerLayer::new())
+    .layer(middleware::from_fn(mw_req_stamp_resolver))
+    .fallback_service(routes_static::serve_dir());
+
+  // region:    --- Start Server
+  // Note: For this block, ok to unwrap.
+  let listener = TcpListener::bind("127.0.0.1:8080").await.unwrap();
+  info!("{:<12} - {:?}\n", "LISTENING", listener.local_addr());
+  axum::serve(listener, routes_all.into_make_service())
+    .await
+    .unwrap();
+  // endregion: --- Start Server
+
+  Ok(())
+}
+
 use fake::{Dummy, Fake, Faker};
 // use rand::rngs::StdRng;
 // use rand::SeedableRng;
@@ -15,50 +79,3 @@ struct Bar<T> {
   field: Vec<T>,
 }
 
-fn main() {
-  // type derived Dummy
-  let f: Foo = Faker.fake();
-  println!("{:?}", f);
-
-  let b: Bar<Foo> = Faker.fake();
-  println!("{:?}", b);
-
-  // using `Faker` to generate default fake value of given type
-  let tuple = Faker.fake::<(u8, u32, f32)>();
-  println!("tuple {:?}", tuple);
-  println!("String {:?}", Faker.fake::<String>());
-
-  // types U can used to generate fake value T, if `T: Dummy<U>`
-  println!("String {:?}", (8..20).fake::<String>());
-  println!("u32 {:?}", (8..20).fake::<u32>());
-
-  // using `faker` module with locales
-  use fake::faker::name::raw::*;
-  use fake::locales::*;
-
-  let name: String = Name(EN).fake();
-  println!("name {:?}", name);
-
-  let name: String = Name(ZH_TW).fake();
-  println!("name {:?}", name);
-
-  // using convenient function without providing locale
-  use fake::faker::lorem::en::*;
-  let words: Vec<String> = Words(3..5).fake();
-  println!("words {:?}", words);
-
-  // using macro to generate nested collection
-  // let name_vec = fake::vec![String as Name(EN); 4, 3..5, 2];
-  // println!("random nested vec {:?}", name_vec);
-
-  // // fixed seed rng
-  // let seed = [
-  //   1, 0, 0, 0, 23, 0, 0, 0, 200, 1, 0, 0, 210, 30, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-  //   0, 0, 0, 0,
-  // ];
-  // let ref mut r = StdRng::from_seed(seed);
-  // for _ in 0..5 {
-  //   let v: usize = Faker.fake_with_rng(r);
-  //   println!("value from fixed seed {}", v);
-  // }
-}

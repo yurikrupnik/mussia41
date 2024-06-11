@@ -4,6 +4,9 @@
 use std::sync::OnceLock;
 
 pub mod socket_addrs;
+mod time;
+mod envs;
+mod b64;
 
 // use serde::{Deserialize, Serialize};
 
@@ -40,40 +43,4 @@ pub fn get_port() -> u16 {
     get_env_variable(PORT_STR, DEFAULT_PORT)
         .parse()
         .unwrap_or(8080)
-}
-
-
-// New way
-
-#[derive(Debug)]
-pub enum Error {
-    ConfigMissingEnv(&'static str),
-}
-
-pub fn config() -> &'static Config {
-    static INSTANCE: OnceLock<Config> = OnceLock::new();
-
-    INSTANCE.get_or_init(|| {
-      Config::load_from_env().unwrap_or_else(|ex| {
-        panic!("Fatal - While loading config - Cause: {ex:?}")
-      })
-    })
-}
-
-#[allow(non_snake_case)]
-pub struct Config {
-  // -- Web server
-  pub WEB_FOLDER: String,
-}
-
-impl Config {
-  fn load_from_env() -> Result<Config, Error> {
-    Ok(Self {
-      WEB_FOLDER: get_env("WEB_FOLDER")?,
-    })
-  }
-}
-
-fn get_env(name: &'static str) -> Result<String, Error> {
-    std::env::var(name).map_err(|_| Error::ConfigMissingEnv(name))
 }
