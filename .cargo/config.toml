@@ -1,2 +1,5 @@
+[env]
+RUST_LOG= 'rust_web_server=debug'
+
 [build]
 target-dir = 'dist/target'

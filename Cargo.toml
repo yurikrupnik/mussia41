@@ -1,26 +1,36 @@
+[workspace.lints.rust]
+unsafe_code = "forbid"
+
 [workspace]
 resolver = '2'
 members = [
-    'libs/models',
-    'libs/services',
-    'apps/web/actix',
-    'apps/web/salvo',
-    'apps/web/ntex',
-    'apps/web/axum',
-    'apps/operators/zerg',
-    'apps/operators/protos',
-    'libs/shared',
-    'libs/general',
-    'apps/operators/orc',
-    'libs/proc_macros',
-    'libs/generic_api',
-    'apps/micro/book',
-    'apps/ci/ci_example',
-    'libs/k8s',
+	'libs/models',
+	'libs/services',
+	'apps/web/actix',
+	'apps/web/salvo',
+	'apps/web/ntex',
+	'apps/web/axum',
+	'apps/operators/zerg',
+	'apps/operators/protos',
+	'libs/shared',
+	'libs/general',
+	'apps/operators/orc',
+	'libs/proc_macros',
+	'libs/generic_api',
+	'apps/micro/book',
+	'apps/ci/ci_example',
+	'libs/k8s',
+	'libs/webserver/axum',
+	'apps/manager/alina',
+	'libs/playground',
 ]
 
 [workspace.dependencies]
-proc_macros = { path = 'libs/proc_macros' }
+proc_macros = { path = "libs/proc_macros" }
+sentry = "0.34"
+time = {version = "0.3", features = ["formatting", "parsing", "serde"]}
+serde_with = {version = "3", features = ["time_0_3"] }
+derive_more = {version = "1.0.0-beta.6", features = ["from", "display"] }
 
 [profile.release]
 opt-level = 'z'
